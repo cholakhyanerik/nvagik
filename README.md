@@ -68,7 +68,7 @@ Day-to-day commands:
 
 | Purpose | Command |
 | --- | --- |
-| Run the tests | `uv run pytest` |
+| Run the tests (headless: no windows open) | `uv run pytest` |
 | Lint | `uv run ruff check .` |
 | Format | `uv run ruff format .` |
 | Add a dependency | `uv add <package>` (dev tools: `uv add --dev <package>`) |

@@ -1,6 +1,6 @@
 [project]
 name = "nvagik"
-version = "0.1.7"
+version = "0.1.8"
 description = "Free, open-source digital audio workstation (DAW) for Windows with an Armenian, Russian and English interface."
 readme = "README.md"
 license = "GPL-3.0-or-later"
@@ -23,6 +23,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pytest>=9.2.0",
+    "pytest-qt>=4.5.0",
     "ruff>=0.17.6",
 ]
 
@@ -43,3 +44,7 @@ ignore = ["E501"]  # the formatter handles line length
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+qt_api = "pyside6"
+qt_log_level_fail = "WARNING"  # a Qt warning usually means a real bug
+# ...except the offscreen platform's own limits (resize hints, raise, keyboard grab).
+qt_log_ignore = ["^This plugin does not support "]

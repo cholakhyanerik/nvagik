@@ -14,20 +14,15 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-7: Add pytest-qt and an offscreen Qt test fixture
-2. NVG-120: Design system v0
-3. NVG-130: Add sounddevice
-4. NVG-400: Spike: MIDI libraries on Python 3.15
-5. NVG-610: Spike: VST3 hosting
-6. NVG-20: Decide the minimum Windows version
-7. NVG-21: Decide the project file format
+1. NVG-8: Minimal CI workflow
+2. NVG-100: App bootstrap module
+3. NVG-120: Design system v0
+4. NVG-130: Add sounddevice
+5. NVG-400: Spike: MIDI libraries on Python 3.15
+6. NVG-610: Spike: VST3 hosting
+7. NVG-20: Decide the minimum Windows version
 
 ## Project setup and repository
-
-### NVG-7: Add pytest-qt and an offscreen Qt test fixture
-**Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** —
-- [ ] `pytest-qt` added with `uv add --dev`; `tests/conftest.py` forces `QT_QPA_PLATFORM=offscreen`.
-- [ ] An example widget test runs headless and passes in under 2 s.
 
 ### NVG-8: Minimal CI workflow
 **Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** NVG-7
@@ -145,6 +140,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 ### NVG-121: Theme implementation
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-120, NVG-101
 - [ ] `src/nvagik/ui/theme.py` builds the QSS/palette from the tokens; applied at startup; no colors or fonts hard-coded elsewhere.
+- [ ] The theme sets the application font explicitly (the offscreen test platform otherwise defaults to Arial, the real Windows platform to Segoe UI), and widget tests apply the theme, so text widths measured in tests match the app. `tests/test_qt_offscreen.py` uses the theme font instead of the hard-coded "Segoe UI".
 
 ### NVG-122: Placeholder app icon
 **Type:** Task · **Priority:** P2 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-120

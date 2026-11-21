@@ -4,6 +4,17 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-11-21
+
+### Added
+
+- Headless widget tests (NVG-7): `pytest-qt` 4.5.0 is a dev dependency and `tests/conftest.py` forces the Qt `offscreen` platform, so tests never open windows on screen and behave the same locally and in CI. pytest-qt is pinned to PySide6 (`qt_api = "pyside6"`), and a Qt warning during a test fails it (`qt_log_level_fail = "WARNING"`), because Qt warnings usually mean real bugs. The offscreen platform's own "This plugin does not support ..." messages (resizing a shown window, popups, keyboard grab) are ignored.
+- `tests/test_qt_offscreen.py`: example widget tests (button click, typing into a line edit, a main window with a combo box and a menu popup) that run in about 0.2 s together, a check that offscreen text uses real fonts, and a check that a real Qt warning fails a test while offscreen limits do not. `tests/conftest.py` enables pytest's `pytester` plugin for such in-process test runs.
+
+### Fixed
+
+- On Windows the offscreen platform looks for fonts inside PySide6, which ships none: widgets had no fonts, Qt printed a `QFontDatabase` warning and text measured about twice its real width. `tests/conftest.py` points `QT_QPA_FONTDIR` to the Windows fonts folder, so Latin, Cyrillic and Armenian text in a named font gets native metrics. NVG-121 now also sets the application font, because the offscreen default font is Arial, not Segoe UI.
+
 ## [0.1.7] - 2026-11-21
 
 ### Added
@@ -87,7 +98,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.4...v0.1.5
