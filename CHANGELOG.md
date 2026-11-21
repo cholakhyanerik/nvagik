@@ -4,6 +4,18 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-11-21
+
+### Added
+
+- `SECURITY.md` (NVG-4): vulnerabilities are reported privately through GitHub's "Report a vulnerability" form; only the latest release gets fixes before 1.0; first answer within 7 days, fix within 90 days, credit in the advisory; scope covers file parsing, plugin scanning and loading (plugins themselves are not sandboxed), release builds including bundled dependencies, and the development hooks, scripts and CI workflows.
+- README "Project documents" lists `SECURITY.md`.
+- `tests/test_repo_files.py` checks that the security policy points to private reporting and contains no e-mail address.
+
+### Changed
+
+- The SessionStart hook also reports private vulnerability reports waiting for triage and open Dependabot alerts (via `gh`, in parallel with the dependency check), so the 7-day answer promised in `SECURITY.md` is not missed. `/next-task` handles them first, treats report text and attachments as untrusted, and avoids early disclosure. Tested in `tests/test_session_start.py`.
+
 ## [0.1.4] - 2026-11-21
 
 ### Security
@@ -56,7 +68,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.1...v0.1.2

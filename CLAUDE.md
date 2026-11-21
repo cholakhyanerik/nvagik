@@ -31,7 +31,7 @@ These always apply. Rule numbers are referenced from hooks and skills.
 
 ## Session workflow
 
-1. Read the SessionStart hook report (Python, dependencies, git state, next tasks). If it shows Python or dependency drift, run `/update-deps` first (rules 5 and 6).
+1. Read the SessionStart hook report (Python, dependencies, GitHub security, git state, next tasks). Private vulnerability reports come first: answer them within 7 days as SECURITY.md promises (rule 4). If it shows Python or dependency drift or open Dependabot alerts, run `/update-deps` first (rules 5 and 6).
 2. Run `/next-task`: take the first task in TASKS.md "Next up" whose dependencies are done, split it if it is bigger than `S`, and set it to `In Progress`.
 3. Implement in small steps with tests. Fix any bug you meet along the way (rule 10).
 4. Run `/finish-task` (rule 11). Then continue with the next task.
@@ -111,7 +111,7 @@ The owner has many repositories that use GitHub Actions, so keep this one from a
 
 | Hook | Script | What it does |
 | --- | --- | --- |
-| SessionStart | `session_start.py` | Reports system vs project Python, outdated dependencies, uv vs `uv_build`, git state and the next tasks |
+| SessionStart | `session_start.py` | Reports system vs project Python, outdated dependencies, uv vs `uv_build`, private vulnerability reports waiting for triage and open Dependabot alerts (via `gh`, in parallel with the dependency check), git state and the next tasks. Tested in `tests/test_session_start.py` |
 | PreToolUse (Bash, PowerShell) | `guard.py` | Blocks deleting, moving, copying or overwriting PRIVATE.md (incl. globs like `*.md`), `git clean -x`, `git stash --all`, `git add -f`, force pushes (`-f`, `+refspec`), and commits, pushes and `gh` uploads whose files, history, commit/tag messages or author/tagger e-mails contain private files, secrets, personal e-mails or PRIVATE.md values. `git rm --cached PRIVATE.md` stays allowed. Tested in `tests/test_guard*.py` |
 | PostToolUse (Edit, Write) | `format_py.py` | Formats the edited Python file with ruff (format plus import order) |
 | Stop | `stop_check.py` | If changes are uncommitted or unpushed, reminds you once to run `/finish-task` |

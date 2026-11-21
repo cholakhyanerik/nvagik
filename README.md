@@ -81,6 +81,7 @@ Use uv for everything; don't use `pip` directly.
 | Document | What it contains |
 | --- | --- |
 | [LICENSE](LICENSE) | The license: GNU GPL v3 (the project uses GPL-3.0-or-later) |
+| [SECURITY.md](SECURITY.md) | How to report a vulnerability privately, and which versions get fixes |
 | [TASKS.md](TASKS.md) | Backlog of small, Jira-style tasks for everything needed to ship 1.0 |
 | [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Decisions made during development, with reasons |

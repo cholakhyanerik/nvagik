@@ -14,19 +14,15 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-4: Add SECURITY.md
-2. NVG-5: Normalize line endings with .gitattributes
-3. NVG-6: Add the GitHub Sponsors button
-4. NVG-7: Add pytest-qt and an offscreen Qt test fixture
-5. NVG-120: Design system v0
-6. NVG-130: Add sounddevice
-7. NVG-20: Decide the minimum Windows version
+1. NVG-5: Normalize line endings with .gitattributes
+2. NVG-6: Add the GitHub Sponsors button
+3. NVG-7: Add pytest-qt and an offscreen Qt test fixture
+4. NVG-120: Design system v0
+5. NVG-130: Add sounddevice
+6. NVG-20: Decide the minimum Windows version
+7. NVG-21: Decide the project file format
 
 ## Project setup and repository
-
-### NVG-4: Add SECURITY.md
-**Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] Explains how to report a vulnerability privately (GitHub private advisories) and which versions are supported.
 
 ### NVG-5: Normalize line endings with .gitattributes
 **Type:** Chore · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —

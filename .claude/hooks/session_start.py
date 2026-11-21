@@ -1,7 +1,8 @@
-"""SessionStart hook: Python and dependency drift, git state and the next tasks.
+"""SessionStart hook: Python and dependency drift, GitHub security, git state, next tasks.
 
-Implements CLAUDE.md rules 5 (Python follows the system), 6 (dependencies stay
-current) and 9 (TASKS.md drives the work). Standard library only: it runs with
+Implements CLAUDE.md rules 4 (security: private vulnerability reports and
+Dependabot alerts, see SECURITY.md), 5 (Python follows the system), 6
+(dependencies stay current) and 9 (TASKS.md drives the work). Standard library only: it runs with
 the system interpreter (`py -3`), not the project venv, so it also reports the
 newest Python installed on this machine.
 """
@@ -12,12 +13,20 @@ import re
 import subprocess
 import sys
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PYPI = "https://pypi.org/simple/"
+REPO = "repos/cholakhyanerik/nvagik"
 # Fail fast when PyPI is unreachable instead of retrying for a minute.
-ENV = {**os.environ, "UV_HTTP_TIMEOUT": "5", "UV_HTTP_RETRIES": "0", "NO_COLOR": "1"}
+ENV = {
+    **os.environ,
+    "UV_HTTP_TIMEOUT": "5",
+    "UV_HTTP_RETRIES": "0",
+    "NO_COLOR": "1",
+    "GH_PROMPT_DISABLED": "1",
+}
 
 
 def run(*args: str, timeout: float = 10) -> str | None:
@@ -107,6 +116,39 @@ def dependency_status() -> str:
     )
 
 
+def _count(endpoint: str) -> int | None:
+    """Number of items a paginated GitHub list endpoint returns, or None if gh failed."""
+    out = run("gh", "api", "--paginate", f"{REPO}/{endpoint}", "--jq", "length", timeout=8)
+    try:
+        return sum(int(line) for line in out.split()) if out is not None else None
+    except ValueError:
+        return None
+
+
+def github_security_status() -> str:
+    """Waiting private vulnerability reports (SECURITY.md promises an answer in 7 days)."""
+    reports = _count("security-advisories?state=triage&per_page=100")
+    alerts = _count("dependabot/alerts?state=open&per_page=100")
+    if reports is None or alerts is None:
+        return (
+            "GitHub security: could not check (offline, or gh is not logged in). "
+            "Retry later: SECURITY.md promises reporters an answer within 7 days."
+        )
+    if not reports and not alerts:
+        return (
+            "GitHub security: no private vulnerability reports waiting, no open Dependabot alerts"
+        )
+    parts = []
+    if reports:
+        parts.append(
+            f"{reports} private vulnerability report(s) waiting for triage "
+            "-> ACTION (rule 4): answer within 7 days (SECURITY.md), before other work"
+        )
+    if alerts:
+        parts.append(f"{alerts} open Dependabot alert(s) -> ACTION (rule 4): fix with /update-deps")
+    return "GitHub security: " + "; ".join(parts)
+
+
 def git_status() -> str:
     out = run("git", "status", "--porcelain=v1", "--branch")
     if out is None:
@@ -136,10 +178,13 @@ def next_tasks(limit: int = 5) -> str:
 
 
 def main() -> None:
-    lines = ["Nvagik session check (.claude/hooks/session_start.py):", python_status()]
-    if uv := uv_status():
-        lines.append(uv)
-    lines += [dependency_status(), git_status(), next_tasks()]
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        # Network checks run side by side so the hook stays within its 60 s timeout.
+        security = pool.submit(github_security_status)
+        lines = ["Nvagik session check (.claude/hooks/session_start.py):", python_status()]
+        if uv := uv_status():
+            lines.append(uv)
+        lines += [dependency_status(), security.result(), git_status(), next_tasks()]
     context = "\n".join(lines)
     print(
         json.dumps(
