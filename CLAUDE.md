@@ -112,7 +112,7 @@ The owner has many repositories that use GitHub Actions, so keep this one from a
 | Hook | Script | What it does |
 | --- | --- | --- |
 | SessionStart | `session_start.py` | Reports system vs project Python, outdated dependencies, uv vs `uv_build`, private vulnerability reports waiting for triage and open Dependabot alerts (via `gh`, in parallel with the dependency check), git state and the next tasks. Tested in `tests/test_session_start.py` |
-| PreToolUse (Bash, PowerShell) | `guard.py` | Blocks deleting, moving, copying or overwriting PRIVATE.md (incl. globs like `*.md`), `git clean -x`, `git stash --all`, `git add -f`, force pushes (`-f`, `+refspec`), and commits, pushes and `gh` uploads whose files, history, commit/tag messages or author/tagger e-mails contain private files, secrets, personal e-mails or PRIVATE.md values. `git rm --cached PRIVATE.md` stays allowed. Tested in `tests/test_guard*.py` |
+| PreToolUse (Bash, PowerShell) | `guard.py` | Blocks deleting, moving, copying or overwriting PRIVATE.md (incl. globs like `*.md`), `git clean -x`, `git stash --all`, `git add -f`, force pushes (`-f`, `+refspec`), and commits, pushes and `gh` uploads whose files, history, commit/tag messages or author/tagger e-mails contain private files, secrets, personal e-mails or PRIVATE.md values. Files that diffs show as binary (`binary` in `.gitattributes`, UTF-16) are read whole from the object database; text up to 8 MB is scanned whole, larger text, Git LFS pointers and pushed blobs or trees (tags, refspec sources) are blocked as unscannable; pushes also cover merges, a detached HEAD, root commits and explicit refspec sources. `git rm --cached PRIVATE.md` stays allowed. Tested in `tests/test_guard*.py` |
 | PostToolUse (Edit, Write) | `format_py.py` | Formats the edited Python file with ruff (format plus import order) |
 | Stop | `stop_check.py` | If changes are uncommitted or unpushed, reminds you once to run `/finish-task` |
 
@@ -136,7 +136,7 @@ Keep this setup improving: when a task teaches you something reusable (a convent
 ## Gotchas
 
 - On 2026-11-21 PyPI was temporarily unreachable from this machine while GitHub worked. Use `--offline` and retry later; don't block task work on it.
-- Git on Windows warns "LF will be replaced by CRLF" until `.gitattributes` exists (NVG-5).
+- `.gitattributes` keeps every text file in LF, on disk too (`* text=auto eol=lf`, overriding `core.autocrlf`). Only `*.bat` and `*.cmd` use CRLF. When a new binary file type enters the repo (audio, images, fonts, packages), add it there as `binary`; `tests/test_gitattributes.py` checks the rules and that no file is stored with CRLF.
 - Hook scripts run with the system Python (`py -3`), not the venv, so they must use only the standard library.
 - Strings that look like secrets in tests must be assembled at run time (`"ghp_" + "A" * 36`), otherwise the guard blocks the commit.
 - The guard reads the literal command text: a command that merely mentions deleting PRIVATE.md (even inside `echo`) is blocked. Put test payloads in files and pipe them in (`py -3 .claude/hooks/guard.py < payload.json`).

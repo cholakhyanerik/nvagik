@@ -14,20 +14,15 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-5: Normalize line endings with .gitattributes
-2. NVG-6: Add the GitHub Sponsors button
-3. NVG-7: Add pytest-qt and an offscreen Qt test fixture
-4. NVG-120: Design system v0
-5. NVG-130: Add sounddevice
-6. NVG-20: Decide the minimum Windows version
-7. NVG-21: Decide the project file format
+1. NVG-6: Add the GitHub Sponsors button
+2. NVG-7: Add pytest-qt and an offscreen Qt test fixture
+3. NVG-120: Design system v0
+4. NVG-130: Add sounddevice
+5. NVG-400: Spike: MIDI libraries on Python 3.15
+6. NVG-610: Spike: VST3 hosting
+7. NVG-20: Decide the minimum Windows version
 
 ## Project setup and repository
-
-### NVG-5: Normalize line endings with .gitattributes
-**Type:** Chore · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] `.gitattributes` sets `* text=auto eol=lf` and marks binary types (wav, flac, mp3, png, ico, qm) as binary.
-- [ ] `git add --renormalize .` committed; no more "LF will be replaced by CRLF" warnings.
 
 ### NVG-6: Add the GitHub Sponsors button
 **Type:** Chore · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —

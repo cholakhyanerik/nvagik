@@ -165,3 +165,36 @@ def test_added_lines_are_grouped_by_file(guard):
         "a.py": ["one", "++ not a header"],
         "notes q.md": ["two"],
     }
+
+
+def test_binary_entries_map_new_blob_ids_to_file_names(guard):
+    new, old, zero = "1" * 40, "2" * 40, "0" * 40
+    diff = "\n".join(
+        [
+            "diff --git a/notes.png b/notes.png",
+            "new file mode 100644",
+            f"index {zero}..{new}",
+            "Binary files /dev/null and b/notes.png differ",
+            "diff --git a/gone.wav b/gone.wav",
+            "deleted file mode 100644",
+            f"index {old}..{zero}",
+            "Binary files a/gone.wav and /dev/null differ",
+            "diff --git a/a.py b/a.py",
+            f"index {old}..{new[:-1]}3 100644",
+            "--- a/a.py",
+            "+++ b/a.py",
+            "@@ -0,0 +1 @@",
+            "+Binary files x and y differ",
+        ]
+    )
+    assert guard.binary_blobs(diff) == {new: "notes.png"}
+
+
+def test_decode_small_reads_text_encodings_and_skips_real_binaries(guard):
+    assert guard.decode_small("tok".encode("utf-16")) == "tok"
+    assert guard.decode_small("tok".encode("utf-32")) == "tok"
+    assert guard.decode_small("token".encode("utf-16-be")) == "token"
+    assert guard.decode_small(b"plain\x00") == "plain"
+    assert guard.decode_small(b"plain") == "plain"
+    assert guard.decode_small(b"RIFF\x00\x00WAVE") is None
+    assert guard.decode_small(b"RIFF\x24\x00\x00\x00WAVEfmt " + bytes(64)) is None

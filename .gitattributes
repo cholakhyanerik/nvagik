@@ -1,0 +1,74 @@
+# Line endings (NVG-5): text files are stored and checked out with LF, also on Windows.
+* text=auto eol=lf
+
+# cmd.exe needs CRLF in batch files.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files: no line-ending conversion, no text diffs or merges.
+# Keep this list in sync with BINARY in tests/test_gitattributes.py.
+# Audio, MIDI and instruments
+*.wav binary
+*.w64 binary
+*.flac binary
+*.mp3 binary
+*.ogg binary
+*.opus binary
+*.aif binary
+*.aiff binary
+*.aifc binary
+*.caf binary
+*.m4a binary
+*.aac binary
+*.wma binary
+*.wv binary
+*.mid binary
+*.midi binary
+*.sf2 binary
+*.sf3 binary
+# Plugins and presets
+*.vst3 binary
+*.clap binary
+*.vstpreset binary
+*.fxp binary
+*.fxb binary
+# Images and icons
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.bmp binary
+*.tif binary
+*.tiff binary
+*.ico binary
+# Compiled translations, fonts and NumPy test data
+*.qm binary
+*.ttf binary
+*.ttc binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.npy binary
+*.npz binary
+# Archives and packages
+*.zip binary
+*.7z binary
+*.gz binary
+*.xz binary
+*.tar binary
+*.whl binary
+*.cab binary
+*.msi binary
+*.msix binary
+*.msixbundle binary
+*.msixupload binary
+*.appx binary
+*.appxupload binary
+# Native code
+*.exe binary
+*.dll binary
+*.pyd binary
+*.lib binary
+*.obj binary
+*.pdb binary
