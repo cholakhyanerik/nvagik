@@ -4,6 +4,12 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-11-21
+
+### Added
+
+- GitHub Sponsors button on the repository page (NVG-6): `.github/FUNDING.yml` with `github: cholakhyanerik`, and the repository's Sponsorships feature turned on. The README "Support the project" section mentions the button. `tests/test_repo_files.py` checks the file.
+
 ## [0.1.6] - 2026-11-21
 
 ### Added
@@ -81,7 +87,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.3...v0.1.4

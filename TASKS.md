@@ -14,19 +14,15 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-6: Add the GitHub Sponsors button
-2. NVG-7: Add pytest-qt and an offscreen Qt test fixture
-3. NVG-120: Design system v0
-4. NVG-130: Add sounddevice
-5. NVG-400: Spike: MIDI libraries on Python 3.15
-6. NVG-610: Spike: VST3 hosting
-7. NVG-20: Decide the minimum Windows version
+1. NVG-7: Add pytest-qt and an offscreen Qt test fixture
+2. NVG-120: Design system v0
+3. NVG-130: Add sounddevice
+4. NVG-400: Spike: MIDI libraries on Python 3.15
+5. NVG-610: Spike: VST3 hosting
+6. NVG-20: Decide the minimum Windows version
+7. NVG-21: Decide the project file format
 
 ## Project setup and repository
-
-### NVG-6: Add the GitHub Sponsors button
-**Type:** Chore · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] `.github/FUNDING.yml` with `github: cholakhyanerik`; the Sponsor button shows on the repository page.
 
 ### NVG-7: Add pytest-qt and an offscreen Qt test fixture
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** —

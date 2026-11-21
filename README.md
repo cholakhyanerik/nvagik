@@ -221,4 +221,4 @@ Why this license was chosen: [docs/DECISIONS.md](docs/DECISIONS.md#license-nvg-1
 
 ## Support the project
 
-Nvagik is free and is developed in the open. If you'd like to support development, please consider sponsoring it on [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik).
+Nvagik is free and is developed in the open. If you'd like to support development, please consider sponsoring it on [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik), or use the **Sponsor** button at the top of the repository page.
