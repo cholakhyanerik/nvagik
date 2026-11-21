@@ -4,6 +4,13 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-11-21
+
+### Changed
+
+- Repository topics on GitHub (NVG-10): `daw`, `digital-audio-workstation`, `music`, `music-production`, `audio`, `pyside6`, `qt`, `python`, `windows`, `armenian`, so the project shows up in GitHub's topic pages and search.
+- TASKS.md: the social preview image moved to its own card, NVG-15, which waits for the app icon (NVG-122). GitHub has no API for uploading it, so the card already holds the exact steps in case it needs the owner's browser.
+
 ## [0.1.10] - 2026-11-21
 
 ### Added
@@ -128,7 +135,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.7...v0.1.8

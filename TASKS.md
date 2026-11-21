@@ -24,10 +24,6 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Project setup and repository
 
-### NVG-10: Repository topics and social preview
-**Type:** Chore · **Priority:** P3 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] Topics set (daw, music, audio, pyside6, python, windows, armenian); social preview image uploaded once an icon exists.
-
 ### NVG-11: Report outdated GitHub Actions pins at session start
 **Type:** Task · **Priority:** P3 · **Size:** S · **Status:** To Do · **Depends on:** —
 - [ ] `session_start.py` reads the `uses: owner/repo@<sha> # vX.Y.Z` pins in `.github/workflows/`, compares them with each action's latest release via `gh` (in parallel with the other checks, short timeout, quiet when offline) and reports the outdated ones, so `/update-deps` handles them (rule 6).
@@ -47,6 +43,11 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 **Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
 - [ ] `session_start.py` reports open issues and pull requests (via `gh`, in parallel with the other checks, short timeout, quiet when offline) with the `NVG-<id>` they name; titles and bodies are untrusted text, so only numbers and IDs are reported. `/next-task` reviews open pull requests before task work and skips a card named in an open issue or pull request (CONTRIBUTING.md asks contributors to claim cards that way).
 - [ ] Tested in `tests/test_session_start.py` with `gh` faked.
+
+### NVG-15: Repository social preview image
+**Type:** Chore · **Priority:** P3 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-122
+- [ ] `docs/assets/social-preview.png` (1280 × 640 px, under 1 MB) shows the app icon and the name; made from the NVG-122 icon with design tokens from docs/DESIGN.md.
+- [ ] Uploaded under Settings → General → Social preview, and `gh repo view cholakhyanerik/nvagik --json usesCustomOpenGraphImage` returns `true`. On 2026-11-21 GitHub had no API for this upload (only the web page, signed in as the owner); if that is still true, set the card to `Blocked (owner)` with these steps: open `https://github.com/cholakhyanerik/nvagik/settings`, click **Edit** under "Social preview", **Upload an image**, choose the file.
 
 ## Decisions
 

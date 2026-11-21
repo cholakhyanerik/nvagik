@@ -22,7 +22,7 @@ wheels = [
 
 [[package]]
 name = "nvagik"
-version = "0.1.10"
+version = "0.1.11"
 source = { editable = "." }
 dependencies = [
     { name = "pyside6" },
