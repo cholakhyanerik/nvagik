@@ -4,6 +4,12 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-21
+
+### Security
+
+- GitHub security features enabled on the repository (NVG-3): Dependabot alerts (the dependency graph reads `uv.lock`), secret scanning with push protection, and private vulnerability reporting. Dependabot security-update pull requests stay off, because dependencies are upgraded every session and extra pull requests would only add CI runs.
+
 ## [0.1.3] - 2026-11-21
 
 ### Added
@@ -50,7 +56,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.0...v0.1.1

@@ -4,6 +4,7 @@ Decisions made while building Nvagik, newest first. CLAUDE.md rule 1: when somet
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-21 | GitHub security (NVG-3): Dependabot alerts, secret scanning, push protection and private vulnerability reporting are on; Dependabot security-update pull requests stay off. | Alerts cost nothing and the dependency graph reads `uv.lock`. Dependencies are already upgraded every session (rule 6), and automatic pull requests would only add CI runs (rule 12). Generic-pattern secret scanning and validity checks need a paid GitHub Secret Protection license and could not be enabled; the guard hook covers generic secrets locally. |
 | 2026-11-21 | License: GPL-3.0-or-later (NVG-1). | Keeps `pedalboard` (GPL-3.0) for VST3 hosting, still allows paid Store builds of the open code, and blocks closed forks. Full comparison: [License](#license-nvg-1). |
 | 2026-11-21 | Each finished task bumps PATCH, each finished phase bumps MINOR, the Store release is 1.0.0. | The owner wants a version and CHANGELOG entry after every task; phases map naturally to minor versions. |
 | 2026-11-21 | Steps that spend money, sign agreements or need the owner's identity are `Blocked (owner)` tasks, the only exception to full autonomy. | The agent cannot legally or financially act for the owner; everything else is prepared so the owner only clicks. |

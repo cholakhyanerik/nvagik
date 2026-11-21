@@ -84,6 +84,7 @@ These are initial targets and will be refined with measurements in `docs/PERFORM
 - **The app makes no network requests** and collects no data unless a task explicitly adds a feature that needs it.
 - **Plugins are untrusted native code.** Scan them in a separate process; a crashing plugin must not take the app down.
 - **New dependencies** must be well known, maintained, license-compatible and have Windows wheels for the current Python. Check them before `uv add`, and run `uvx pip-audit` when online.
+- **GitHub security features** (NVG-3): Dependabot alerts, secret scanning, push protection and private vulnerability reporting are on; Dependabot security-update PRs are off on purpose (docs/DECISIONS.md). Check with `gh api repos/cholakhyanerik/nvagik --jq .security_and_analysis` and `gh api repos/cholakhyanerik/nvagik/private-vulnerability-reporting`.
 - **History is not rewritten** except to remove leaked data, and then only with `--force-with-lease`.
 - Use the `security-auditor` agent for anything touching file parsing, subprocesses, plugins, networking, CI or these hooks.
 

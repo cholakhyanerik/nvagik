@@ -14,7 +14,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-3: Enable GitHub security features
+1. NVG-4: Add SECURITY.md
 2. NVG-5: Normalize line endings with .gitattributes
 3. NVG-6: Add the GitHub Sponsors button
 4. NVG-7: Add pytest-qt and an offscreen Qt test fixture
@@ -24,13 +24,8 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Project setup and repository
 
-### NVG-3: Enable GitHub security features
-**Type:** Chore · **Priority:** P0 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] Dependabot alerts, secret scanning, push protection and private vulnerability reporting are enabled via `gh api`.
-- [ ] Verified with `gh api repos/cholakhyanerik/nvagik` (security_and_analysis).
-
 ### NVG-4: Add SECURITY.md
-**Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-3
+**Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —
 - [ ] Explains how to report a vulnerability privately (GitHub private advisories) and which versions are supported.
 
 ### NVG-5: Normalize line endings with .gitattributes
