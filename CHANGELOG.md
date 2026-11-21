@@ -4,6 +4,14 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-21
+
+### Added
+
+- `LICENSE` with the verbatim GNU GPL v3 text (NVG-2).
+- `license = "GPL-3.0-or-later"` and `license-files` in pyproject.toml, so built packages carry the license in their metadata and include `LICENSE`.
+- `tests/test_license.py` checks the license text against the official SHA-256 and the declared license in pyproject.toml and in the installed metadata.
+
 ## [0.1.2] - 2026-11-21
 
 ### Changed
@@ -42,7 +50,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/cholakhyanerik/nvagik/releases/tag/v0.1.0

@@ -14,20 +14,15 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-2: Add the LICENSE file
-2. NVG-3: Enable GitHub security features
-3. NVG-5: Normalize line endings with .gitattributes
-4. NVG-6: Add the GitHub Sponsors button
-5. NVG-7: Add pytest-qt and an offscreen Qt test fixture
-6. NVG-20: Decide the minimum Windows version
-7. NVG-21: Decide the project file format
+1. NVG-3: Enable GitHub security features
+2. NVG-5: Normalize line endings with .gitattributes
+3. NVG-6: Add the GitHub Sponsors button
+4. NVG-7: Add pytest-qt and an offscreen Qt test fixture
+5. NVG-120: Design system v0
+6. NVG-130: Add sounddevice
+7. NVG-20: Decide the minimum Windows version
 
 ## Project setup and repository
-
-### NVG-2: Add the LICENSE file
-**Type:** Task · **Priority:** P0 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] `LICENSE` contains the verbatim GPL-3.0 text; `license = "GPL-3.0-or-later"` and `license-files` set in pyproject.toml (decided in NVG-1).
-- [ ] GitHub shows the license on the repository page.
 
 ### NVG-3: Enable GitHub security features
 **Type:** Chore · **Priority:** P0 · **Size:** XS · **Status:** To Do · **Depends on:** —
@@ -58,7 +53,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 - [ ] Follows the GitHub Actions budget rules in CLAUDE.md (push to main and PRs only, docs-only changes skipped, concurrency cancel, `timeout-minutes: 10`, actions pinned to commit SHAs, `permissions: contents: read`, no schedules).
 
 ### NVG-9: Add CONTRIBUTING.md
-**Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** NVG-2
+**Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
 - [ ] Short guide: setup with uv, tests, the project rules (speed, Windows only, three languages, no breaking changes), commit format.
 - [ ] States that contributions are accepted under GPL-3.0-or-later (inbound = outbound).
 
@@ -652,7 +647,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 ### NVG-808: Ship license notices with release builds
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-801
 - [ ] The standalone build and the MSIX contain `LICENSE` and a generated `THIRD-PARTY-NOTICES.txt` with the name, version and license text of every bundled package (Qt and PySide6 included).
-- [ ] A test fails if a runtime dependency is missing from the notices.
+- [ ] A test builds the wheel and sdist and checks that both contain `LICENSE`, and fails if a runtime dependency is missing from the notices.
 
 ### NVG-810: Reserve the name "Nvagik" in Partner Center
 **Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** NVG-24

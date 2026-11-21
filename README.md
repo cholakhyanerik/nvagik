@@ -80,6 +80,7 @@ Use uv for everything; don't use `pip` directly.
 
 | Document | What it contains |
 | --- | --- |
+| [LICENSE](LICENSE) | The license: GNU GPL v3 (the project uses GPL-3.0-or-later) |
 | [TASKS.md](TASKS.md) | Backlog of small, Jira-style tasks for everything needed to ship 1.0 |
 | [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Decisions made during development, with reasons |
@@ -208,7 +209,7 @@ The check was done on **2026-11-21**. All candidates come from Armenian words an
 
 ## License
 
-Nvagik is free software, licensed under the **GNU General Public License v3.0 or later** (GPL-3.0-or-later).
+Nvagik is free software, licensed under the **GNU General Public License v3.0 or later** (GPL-3.0-or-later). The full text is in [LICENSE](LICENSE).
 
 - You may use, study, share and change it, for any purpose.
 - If you distribute Nvagik or a modified version, you must make its source code available under the same license.
