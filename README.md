@@ -93,7 +93,7 @@ These rules are mandatory and do not change.
 
 - **Language and tools.** Python 3.15. GUI: PySide (Qt for Python). Package and environment management: uv (Astral). Day-to-day commands are `uv init`, `uv add`, `uv sync` and `uv run`. Everything is done with this stack only.
 - **Platform.** Windows only. We don't write code or conditional branches for other operating systems.
-- **Repository.** Open (public). The license has not been chosen yet; see [Open questions](#open-questions).
+- **Repository.** Open (public), licensed under GPL-3.0-or-later (see [License](#license)).
 - **Funding.** For now, donations only: [github.com/sponsors/cholakhyanerik](https://github.com/sponsors/cholakhyanerik). The donation link is shown in this README and in the app's **About** window. This is temporary: later it will be replaced by a paid model, with payments going to the developer's sole proprietorship.
 - **Interface languages.** Armenian, Russian, English. No user-facing text is hard-coded. All strings go through translation files (Qt's translation system), so adding a new language never requires a code change.
 - **Speed.** This is the most important rule. Every new feature is measured: how fast the app starts, how much memory it uses, and how long the audio callback takes. A feature that slows the app down gets optimized or is not accepted.
@@ -106,7 +106,7 @@ These rules are mandatory and do not change.
   | Audio input/output | `sounddevice` (PortAudio) |
   | Audio files | `soundfile` |
   | MIDI | `mido` / `python-rtmidi` |
-  | VST3 plugin hosting | `pedalboard` |
+  | VST3 plugin hosting | `pedalboard` (GPL-3.0, fits the project license) |
 
 - **Distribution.** Through the Microsoft Store, with a landing page later. For whether the name is free, see [Name availability check](#name-availability-check).
 
@@ -165,13 +165,13 @@ The revenue model has two stages:
 
 These decisions are for the project owner.
 
-1. **License.** The `pedalboard` library (the VST3 hosting candidate) is licensed under GPL-3.0, and its core audio code comes from JUCE. If we use it, the project must be GPL-compatible. PySide is LGPL, so it causes no problem. Do we choose **GPL-3.0**, or **MIT/Apache-2.0** without `pedalboard`, handling VST3 some other way?
+1. **License.** *Decided on 2026-11-21:* **GPL-3.0-or-later**. It keeps `pedalboard` (GPL-3.0) available for VST3 hosting and still allows paid Store builds of the open code. See [License](#license) and the [comparison](docs/DECISIONS.md#license-nvg-1).
 2. **Microsoft Store edition.** Should the Store offer the same free version, or a separate version for a small fee?
 3. **Audio drivers.** WASAPI support is required. ASIO support still needs to be checked, since it depends on the PortAudio build and on ASIO licensing. Do we need ASIO for the lowest latency as early as the first phase?
 4. **Minimum Windows version.** Windows 10, or Windows 11 only?
 5. **Project file format.** An open, readable format (for example JSON), or a closed binary format?
 6. **Paid model.** One-time purchase or subscription? What price (paid DAWs cost roughly $60–$199 in our research)? Will there be a free trial? When does the switch happen?
-7. **Open source in the paid stage.** An open repository is a baseline requirement. In the paid stage, does the code stay open while the ready-made Store build is paid? The chosen license must allow this model, and the Store terms must be checked against it.
+7. **Open source in the paid stage.** An open repository is a baseline requirement. In the paid stage, does the code stay open while the ready-made Store build is paid? The GPL-3.0-or-later license (question 1) allows this model: Krita sells its GPL build in the Microsoft Store. The Store terms still have to be checked against it (NVG-23).
 8. **Partner Center account.** Individual or Company for the sole proprietorship? Can paid-app revenue be received in an Armenian bank account? Not checked yet (see [Distribution and revenue model](#distribution-and-revenue-model)).
 
 ## Name availability check
@@ -208,7 +208,14 @@ The check was done on **2026-11-21**. All candidates come from Armenian words an
 
 ## License
 
-Not chosen yet. See open question 1 in [Open questions](#open-questions).
+Nvagik is free software, licensed under the **GNU General Public License v3.0 or later** (GPL-3.0-or-later).
+
+- You may use, study, share and change it, for any purpose.
+- If you distribute Nvagik or a modified version, you must make its source code available under the same license.
+- Ready-made builds in the Microsoft Store may become paid later (see [Distribution and revenue model](#distribution-and-revenue-model)); the source code stays open.
+- Nvagik can load any VST3 plugin, including closed-source ones.
+
+Why this license was chosen: [docs/DECISIONS.md](docs/DECISIONS.md#license-nvg-1).
 
 ## Support the project
 

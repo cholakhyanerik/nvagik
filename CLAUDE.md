@@ -1,6 +1,6 @@
 # CLAUDE.md: Nvagik
 
-Nvagik is a free, open-source DAW for Windows built with Python, PySide6 and uv, with an Armenian, Russian and English interface.
+Nvagik is a free, open-source (GPL-3.0-or-later) DAW for Windows built with Python, PySide6 and uv, with an Armenian, Russian and English interface.
 
 - Product, roadmap, risks, open questions: [README.md](README.md)
 - Backlog to 1.0 (source of truth for work): [TASKS.md](TASKS.md)
@@ -139,6 +139,7 @@ Keep this setup improving: when a task teaches you something reusable (a convent
 - Hook scripts run with the system Python (`py -3`), not the venv, so they must use only the standard library.
 - Strings that look like secrets in tests must be assembled at run time (`"ghp_" + "A" * 36`), otherwise the guard blocks the commit.
 - The guard reads the literal command text: a command that merely mentions deleting PRIVATE.md (even inside `echo`) is blocked. Put test payloads in files and pipe them in (`py -3 .claude/hooks/guard.py < payload.json`).
+- The guard also treats every argument of `sed -i` (the script too) as a path, and it splits commands at `(` and `)` even inside quotes. A script containing `/Nvagik` (the repository folder name) is then blocked as "touching the project root". Use the Edit tool for such edits.
 - The Stop hook blocks the first stop while the tree is dirty. If the work is intentionally unfinished (the owner asked to pause), say so and stop again.
 - ruff targets Python 3.15 and writes `except A, B:` without parentheses (PEP 758). That is valid; don't "fix" it.
 - When the owner pauses mid-task, save the exact remaining steps to memory so the next session can continue.

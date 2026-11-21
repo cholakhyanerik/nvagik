@@ -4,6 +4,14 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-21
+
+### Changed
+
+- License decided: GPL-3.0-or-later (NVG-1). It keeps `pedalboard` (GPL-3.0) available for VST3 hosting, allows paid Microsoft Store builds of the open code (as Krita does) and keeps forks open. The comparison with MIT/Apache-2.0 is in `docs/DECISIONS.md`.
+- README: "License" section, the repository rule and open question 1 updated; open question 7 notes that the license allows a paid Store build.
+- TASKS.md: the About dialog (NVG-133), VST3 spike (NVG-610), CONTRIBUTING (NVG-9), Store decision (NVG-23) and Store submission (NVG-812) cards now follow from the license; new card NVG-808 ships license notices with release builds.
+
 ## [0.1.1] - 2026-11-21
 
 ### Added
@@ -34,6 +42,7 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/cholakhyanerik/nvagik/releases/tag/v0.1.0

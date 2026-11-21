@@ -14,24 +14,19 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-1: Decide the license
-2. NVG-2: Add the LICENSE file
-3. NVG-3: Enable GitHub security features
-4. NVG-5: Normalize line endings with .gitattributes
+1. NVG-2: Add the LICENSE file
+2. NVG-3: Enable GitHub security features
+3. NVG-5: Normalize line endings with .gitattributes
+4. NVG-6: Add the GitHub Sponsors button
 5. NVG-7: Add pytest-qt and an offscreen Qt test fixture
-6. NVG-100: App bootstrap module
-7. NVG-101: Main window shell
+6. NVG-20: Decide the minimum Windows version
+7. NVG-21: Decide the project file format
 
 ## Project setup and repository
 
-### NVG-1: Decide the license
-**Type:** Decision · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** —
-- [ ] GPL-3.0-or-later (keeps `pedalboard`/JUCE for VST3) vs MIT/Apache-2.0 (no `pedalboard`, VST3 solved another way) compared, including selling Store builds of open code.
-- [ ] Decision and reasons recorded in docs/DECISIONS.md; README "License" and open question 1 updated.
-
 ### NVG-2: Add the LICENSE file
-**Type:** Task · **Priority:** P0 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-1
-- [ ] `LICENSE` contains the full license text; `license` field set in pyproject.toml.
+**Type:** Task · **Priority:** P0 · **Size:** XS · **Status:** To Do · **Depends on:** —
+- [ ] `LICENSE` contains the verbatim GPL-3.0 text; `license = "GPL-3.0-or-later"` and `license-files` set in pyproject.toml (decided in NVG-1).
 - [ ] GitHub shows the license on the repository page.
 
 ### NVG-3: Enable GitHub security features
@@ -65,6 +60,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 ### NVG-9: Add CONTRIBUTING.md
 **Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** NVG-2
 - [ ] Short guide: setup with uv, tests, the project rules (speed, Windows only, three languages, no breaking changes), commit format.
+- [ ] States that contributions are accepted under GPL-3.0-or-later (inbound = outbound).
 
 ### NVG-10: Repository topics and social preview
 **Type:** Chore · **Priority:** P3 · **Size:** XS · **Status:** To Do · **Depends on:** —
@@ -88,8 +84,8 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 - [ ] Recorded in docs/DECISIONS.md; open question 3 closed.
 
 ### NVG-23: Decide the Store edition and the paid model
-**Type:** Decision · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** NVG-1
-- [ ] Free vs paid Store edition, one-time purchase vs subscription, price, trial, timing of the switch, and how it fits the license.
+**Type:** Decision · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
+- [ ] Free vs paid Store edition, one-time purchase vs subscription, price, trial, timing of the switch, and how it fits the GPL-3.0-or-later license (Store policies for paid open-source apps checked, including policy 10.8.5 from the Krita case).
 - [ ] Recorded in docs/DECISIONS.md; open questions 2, 6 and 7 closed.
 
 ### NVG-24: Decide the Partner Center account type
@@ -196,7 +192,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ### NVG-133: About dialog
 **Type:** Story · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-101
-- [ ] Shows version, license, GitHub link and the GitHub Sponsors donation link (required by the README); translated.
+- [ ] Shows version, the GPL-3.0-or-later license with its no-warranty notice (GPL section 5(d)), a link to the source of the running version (its git tag) and the GitHub Sponsors donation link (required by the README); translated.
 
 ### NVG-134: Phase 0 exit check
 **Type:** Task · **Priority:** P0 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-113, NVG-132, NVG-133, NVG-106
@@ -558,8 +554,8 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 - [ ] Armed tracks show the input level.
 
 ### NVG-610: Spike: VST3 hosting
-**Type:** Spike · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-1
-- [ ] Hosting option chosen under the license from NVG-1 (`pedalboard` or alternative), checked on Python 3.15; recorded in docs/DECISIONS.md.
+**Type:** Spike · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** —
+- [ ] `pedalboard` (allowed by the GPL-3.0-or-later license, see docs/DECISIONS.md) checked on Python 3.15: wheels, VST3 loading, latency, crash isolation; an alternative chosen if it fails; recorded in docs/DECISIONS.md.
 
 ### NVG-611: Plugin scanner
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-610
@@ -653,6 +649,11 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 **Type:** Task · **Priority:** P2 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-806, NVG-811
 - [ ] Custom domain with HTTPS points to the landing page.
 
+### NVG-808: Ship license notices with release builds
+**Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-801
+- [ ] The standalone build and the MSIX contain `LICENSE` and a generated `THIRD-PARTY-NOTICES.txt` with the name, version and license text of every bundled package (Qt and PySide6 included).
+- [ ] A test fails if a runtime dependency is missing from the notices.
+
 ### NVG-810: Reserve the name "Nvagik" in Partner Center
 **Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** NVG-24
 - [ ] Owner registers the Partner Center account chosen in NVG-24 and reserves the app name (the agent prepares exact steps).
@@ -662,8 +663,9 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 - [ ] Owner buys `nvagik.com` (and `nvagik.app` if wanted) in Cloudflare Registrar; availability re-checked first (it was free on 2026-11-21).
 
 ### NVG-812: Submit to Microsoft Store certification
-**Type:** Task · **Priority:** P0 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** NVG-802, NVG-803, NVG-804, NVG-810, NVG-820, NVG-821
+**Type:** Task · **Priority:** P0 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** NVG-802, NVG-803, NVG-804, NVG-808, NVG-810, NVG-820, NVG-821
 - [ ] Owner uploads the package prepared by the agent and submits it; certification passes.
+- [ ] Partner Center's license terms field links to `LICENSE` (GPL-3.0-or-later) instead of the Standard Application License Terms.
 
 ### NVG-820: Pre-release security audit
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-707
