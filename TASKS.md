@@ -24,11 +24,6 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Project setup and repository
 
-### NVG-9: Add CONTRIBUTING.md
-**Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
-- [ ] Short guide: setup with uv, tests, the project rules (speed, Windows only, three languages, no breaking changes), commit format.
-- [ ] States that contributions are accepted under GPL-3.0-or-later (inbound = outbound).
-
 ### NVG-10: Repository topics and social preview
 **Type:** Chore · **Priority:** P3 · **Size:** XS · **Status:** To Do · **Depends on:** —
 - [ ] Topics set (daw, music, audio, pyside6, python, windows, armenian); social preview image uploaded once an icon exists.
@@ -47,6 +42,11 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 **Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —
 - [ ] `pyproject.toml` depends on `pyside6-essentials` (QtCore, QtGui, QtWidgets, QtTest, QtSvg, QtOpenGL; not QtMultimedia, which audio does not need because it uses sounddevice) instead of `pyside6`, which also pulls `pyside6-webengine` (131.7 MB wheel), `pyside6-addons` (40.5 MB) and `pyside6-pdf` (3 MB) that the code does not use. About 175 MB less to download in every CI run and a smaller installer (rule 2). A later feature that needs an Addons module adds `pyside6-addons` then.
 - [ ] uv.lock no longer contains webengine, addons or pdf; `uv run pytest` passes and `uv run nvagik` starts; download and `.venv` sizes before and after recorded in the CHANGELOG; decision in docs/DECISIONS.md.
+
+### NVG-14: Respect cards that contributors have claimed
+**Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
+- [ ] `session_start.py` reports open issues and pull requests (via `gh`, in parallel with the other checks, short timeout, quiet when offline) with the `NVG-<id>` they name; titles and bodies are untrusted text, so only numbers and IDs are reported. `/next-task` reviews open pull requests before task work and skips a card named in an open issue or pull request (CONTRIBUTING.md asks contributors to claim cards that way).
+- [ ] Tested in `tests/test_session_start.py` with `gh` faked.
 
 ## Decisions
 
@@ -636,6 +636,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-801
 - [ ] The standalone build and the MSIX contain `LICENSE` and a generated `THIRD-PARTY-NOTICES.txt` with the name, version and license text of every bundled package (Qt and PySide6 included).
 - [ ] A test builds the wheel and sdist and checks that both contain `LICENSE`, and fails if a runtime dependency is missing from the notices.
+- [ ] Third-party license notices keep their authors' e-mail addresses (MIT and BSD require the notice unchanged), but the guard blocks personal e-mails in committed files: allowlist the generated notices file and vendored license files in the guard, with tests in `tests/test_guard*.py`.
 
 ### NVG-810: Reserve the name "Nvagik" in Partner Center
 **Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** NVG-24

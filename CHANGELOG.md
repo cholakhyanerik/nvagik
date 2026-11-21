@@ -4,6 +4,23 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-11-21
+
+### Added
+
+- `CONTRIBUTING.md` (NVG-9): a short guide for outside contributors covering setup with uv, the checks to run (and that pull requests changing only Markdown or `docs/` skip CI), the main project rules (speed first, Windows only, three languages, don't break what works, security, design tokens, dependencies), the commit format and pull request steps. Contributions are accepted under GPL-3.0-or-later (inbound = outbound, as in GitHub's Terms of Service), with no CLA; code from elsewhere must be usable under GPL-3.0-or-later and name its source. The guide says openly that Store builds may become paid. GitHub now shows it on new issues and pull requests, and the README links to it.
+- `tests/test_repo_files.py` keeps the guide from drifting: its commit types must match CLAUDE.md, its checks must match the `run:` steps of `ci.yml` in both directions, README and the guide must name the Python version in `.python-version`, and its relative links must match git's file list exactly (NTFS would accept a wrongly cased name that GitHub cannot open).
+- TASKS.md: NVG-14 (session start reports open issues and pull requests, and `/next-task` skips cards a contributor has claimed); NVG-808 now also covers e-mail addresses in third-party license notices, which the guard would block.
+
+### Changed
+
+- `/finish-task` moves lines left under `[Unreleased]` by merged pull requests into the new version; `/update-deps` also updates the Python version in CONTRIBUTING.md.
+- CLAUDE.md links the guide and notes that outside pull requests are merged on GitHub, because the guard blocks pushing commits with a non-noreply e-mail.
+
+### Fixed
+
+- The README setup commands were in an `sh` block with `#` comments, which cmd.exe passes to the program as arguments. They are now marked as PowerShell, where `#` starts a comment.
+
 ## [0.1.9] - 2026-11-21
 
 ### Added
@@ -111,7 +128,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.6...v0.1.7

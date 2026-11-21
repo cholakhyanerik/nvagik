@@ -5,6 +5,7 @@ Nvagik is a free, open-source (GPL-3.0-or-later) DAW for Windows built with Pyth
 - Product, roadmap, risks, open questions: [README.md](README.md)
 - Backlog to 1.0 (source of truth for work): [TASKS.md](TASKS.md)
 - History: [CHANGELOG.md](CHANGELOG.md) · Decisions: [docs/DECISIONS.md](docs/DECISIONS.md)
+- Guide for outside contributors: [CONTRIBUTING.md](CONTRIBUTING.md), a short public summary of these rules. When a rule, a command, the commit format or the CI checks change, update it too; `tests/test_repo_files.py` checks its commit types against CLAUDE.md, its checks against the `run:` steps of `ci.yml`, its Python version against `.python-version` and its links against git's file list.
 - `PRIVATE.md` (git-ignored) holds the owner's business and bank details. Never commit, copy, move or quote it.
 
 **Talk to the owner in Russian**, in simple words, and explain jargon. Everything written into the repository (code, comments, docs, CHANGELOG, commit messages) is in **English**.
@@ -147,3 +148,5 @@ Keep this setup improving: when a task teaches you something reusable (a convent
 - Widget tests use pytest-qt on the `offscreen` platform (`tests/conftest.py`): take `qtbot`, register every top-level widget with `qtbot.addWidget(w)`, and wait with `qtbot.waitSignal` / `qtbot.waitUntil`, never `time.sleep`. Any Qt warning fails the test (`qt_log_level_fail`); fix the cause, or add a known harmless message to `qt_log_ignore` in pyproject.toml (the offscreen "This plugin does not support ..." messages already are). `pytest -s` turns that check off (pytest-qt only captures Qt messages while output is captured), so never use `-s` in CI. Offscreen needs `QT_QPA_FONTDIR` (set to the Windows fonts folder), otherwise Qt has no fonts and text metrics are wrong; its default font is Arial, not Segoe UI.
 - ruff targets Python 3.15 and writes `except A, B:` without parentheses (PEP 758). That is valid; don't "fix" it.
 - When the owner pauses mid-task, save the exact remaining steps to memory so the next session can continue.
+- Merge outside pull requests on GitHub (`gh pr merge --squash`), then `git pull --rebase`. Don't merge them locally and push: the guard blocks a push whose new commits have an author or committer e-mail that is not noreply, and a contributor's commits may use their own address.
+- Don't write Python source through a shell heredoc with escapes like `\0` or `\n`: the shell and Python unescape them twice and the file can end up with NUL bytes or broken strings. Use the Write tool (or write to the scratchpad and copy).

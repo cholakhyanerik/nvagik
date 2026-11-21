@@ -59,7 +59,9 @@ Requirements:
 - Python 3.15
 - [uv](https://docs.astral.sh/uv/)
 
-```sh
+In PowerShell:
+
+```powershell
 git clone https://github.com/cholakhyanerik/nvagik.git
 cd nvagik
 uv sync          # create the virtual environment and install dependencies
@@ -76,7 +78,7 @@ Day-to-day commands:
 | Add a dependency | `uv add <package>` (dev tools: `uv add --dev <package>`) |
 | Remove build and test junk | `py -3 scripts/clean.py` |
 
-Use uv for everything; don't use `pip` directly.
+Use uv for everything; don't use `pip` directly. Want to help? Start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Project documents
 
@@ -84,6 +86,7 @@ Use uv for everything; don't use `pip` directly.
 | --- | --- |
 | [LICENSE](LICENSE) | The license: GNU GPL v3 (the project uses GPL-3.0-or-later) |
 | [SECURITY.md](SECURITY.md) | How to report a vulnerability privately, and which versions get fixes |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to set up, check and submit a change, the main project rules, and the license of contributions |
 | [TASKS.md](TASKS.md) | Backlog of small, Jira-style tasks for everything needed to ship 1.0 |
 | [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Decisions made during development, with reasons |

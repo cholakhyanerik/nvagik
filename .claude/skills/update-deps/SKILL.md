@@ -18,7 +18,7 @@ If the system has a newer minor version (for example 3.16 while the project pins
 1. `uv python pin 3.16` (rewrites `.python-version`).
 2. Set `requires-python = ">=3.16"` in `pyproject.toml`.
 3. `uv sync`. If a dependency has no wheels for the new Python yet, roll back to the old pin, record the reason in `docs/DECISIONS.md`, add a TASKS.md card to retry, and stop here.
-4. Update the Python version in README.md and CLAUDE.md.
+4. Update the Python version in README.md, CONTRIBUTING.md and CLAUDE.md (`tests/test_repo_files.py` checks README and CONTRIBUTING against `.python-version`).
 5. Check for removed or deprecated stdlib APIs used in `src/`, `tests/`, `scripts/` and `.claude/hooks/` (read the "What's New" page) and fix them.
 
 ## 2. Dependencies (rule 6)
