@@ -14,7 +14,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-8: Minimal CI workflow
+1. NVG-13: Depend on pyside6-essentials instead of the full pyside6
 2. NVG-100: App bootstrap module
 3. NVG-120: Design system v0
 4. NVG-130: Add sounddevice
@@ -24,11 +24,6 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Project setup and repository
 
-### NVG-8: Minimal CI workflow
-**Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** NVG-7
-- [ ] Runs `ruff check`, `ruff format --check` and `pytest` on `windows-latest` with the uv cache.
-- [ ] Follows the GitHub Actions budget rules in CLAUDE.md (push to main and PRs only, docs-only changes skipped, concurrency cancel, `timeout-minutes: 10`, actions pinned to commit SHAs, `permissions: contents: read`, no schedules).
-
 ### NVG-9: Add CONTRIBUTING.md
 **Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
 - [ ] Short guide: setup with uv, tests, the project rules (speed, Windows only, three languages, no breaking changes), commit format.
@@ -37,6 +32,21 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 ### NVG-10: Repository topics and social preview
 **Type:** Chore · **Priority:** P3 · **Size:** XS · **Status:** To Do · **Depends on:** —
 - [ ] Topics set (daw, music, audio, pyside6, python, windows, armenian); social preview image uploaded once an icon exists.
+
+### NVG-11: Report outdated GitHub Actions pins at session start
+**Type:** Task · **Priority:** P3 · **Size:** S · **Status:** To Do · **Depends on:** —
+- [ ] `session_start.py` reads the `uses: owner/repo@<sha> # vX.Y.Z` pins in `.github/workflows/`, compares them with each action's latest release via `gh` (in parallel with the other checks, short timeout, quiet when offline) and reports the outdated ones, so `/update-deps` handles them (rule 6).
+- [ ] Tested in `tests/test_session_start.py` with `gh` faked.
+
+### NVG-12: Enforce action pinning in the repository settings
+**Type:** Chore · **Priority:** P2 · **Size:** XS · **Status:** To Do · **Depends on:** —
+- [ ] Repository Actions settings require full-SHA pins and allow only GitHub-owned actions plus `astral-sh/setup-uv@*`: `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions -F enabled=true -f allowed_actions=selected -F sha_pinning_required=true`, then `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions/selected-actions -F github_owned_allowed=true -F verified_allowed=false -f 'patterns_allowed[]=astral-sh/setup-uv@*'`. `tests/test_ci_workflows.py` only catches drift, because a pull request can edit the test. On 2026-11-21 Claude Code's permission check refused this settings change in an unattended session, so it needs the owner's approval of the command.
+- [ ] Checked with `gh api repos/cholakhyanerik/nvagik/actions/permissions`; the check is added to the CLAUDE.md security-features line and recorded in docs/DECISIONS.md; a CI run still passes.
+
+### NVG-13: Depend on pyside6-essentials instead of the full pyside6
+**Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —
+- [ ] `pyproject.toml` depends on `pyside6-essentials` (QtCore, QtGui, QtWidgets, QtTest, QtSvg, QtOpenGL; not QtMultimedia, which audio does not need because it uses sounddevice) instead of `pyside6`, which also pulls `pyside6-webengine` (131.7 MB wheel), `pyside6-addons` (40.5 MB) and `pyside6-pdf` (3 MB) that the code does not use. About 175 MB less to download in every CI run and a smaller installer (rule 2). A later feature that needs an Addons module adds `pyside6-addons` then.
+- [ ] uv.lock no longer contains webengine, addons or pdf; `uv run pytest` passes and `uv run nvagik` starts; download and `.venv` sizes before and after recorded in the CHANGELOG; decision in docs/DECISIONS.md.
 
 ## Decisions
 

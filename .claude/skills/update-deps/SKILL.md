@@ -33,8 +33,27 @@ Then:
 
 1. Raise the lower bounds in `pyproject.toml` to the new versions so they are explicit (`uv add "pyside6>=X.Y"`, `uv add --dev "pytest>=X.Y"`).
 2. For every major or minor upgrade, read the release notes and adapt the code to breaking changes and deprecations.
-3. If `uv --version` is outside the `uv_build>=…,<…` range in `[build-system]`, update the range to the current uv minor version.
+3. If `uv --version` is outside the `uv_build>=…,<…` range in `[build-system]`, update the range to the current uv minor version. CI installs the newest uv that its pinned `astral-sh/setup-uv` release knows (`version: latest-known`); after a local uv upgrade, bump that pin to a release that knows the new uv (see GitHub Actions below), or a `uv.lock` written by the newer uv can fail CI's locked sync.
 4. When online, run `uvx pip-audit` and fix reported vulnerabilities.
+
+### GitHub Actions
+
+Workflows pin every action to a full commit SHA with the version in a comment (`uses: owner/repo@<sha> # vX.Y.Z`), so nothing updates them automatically. Compare each pin with the latest release:
+
+```sh
+grep -ho "uses: [^ ]* # v[0-9.]*" .github/workflows/*.y*ml | sort -u
+gh api repos/<owner>/<repo>/releases/latest --jq .tag_name
+gh api repos/<owner>/<repo>/git/ref/tags/<tag> --jq '.object.type + " " + .object.sha'
+```
+
+If the ref's type is `tag` (an annotated tag), resolve it to the commit with `gh api repos/<owner>/<repo>/git/tags/<sha> --jq .object.sha`.
+
+Before accepting a new SHA (a moved tag can point to a malicious commit, as in the 2025 tj-actions incident):
+
+1. The commit must be in the action's own history: `gh api repos/<owner>/<repo>/compare/<default-branch>...<new-sha> --jq .ahead_by` prints `0`. An immutable release (`gh api repos/<owner>/<repo>/releases/tags/<tag> --jq .immutable` is `true`) is safe as well.
+2. Skim what changed: `gh api repos/<owner>/<repo>/compare/<old-sha>...<new-sha> --jq '.files[].filename'` and the release notes (changed inputs, new network access).
+
+Then update the SHA and the version comment, and let the next push run CI once to confirm. Once NVG-12 restricts the repository's allowed actions, a new action must also be added there.
 
 ## 3. Verify
 

@@ -1,5 +1,7 @@
 # Nvagik
 
+[![CI](https://github.com/cholakhyanerik/nvagik/actions/workflows/ci.yml/badge.svg)](https://github.com/cholakhyanerik/nvagik/actions/workflows/ci.yml)
+
 **Nvagik** is a free, open-source digital audio workstation (DAW) for Windows. Write, record, edit and mix music in a fast, lightweight app with an Armenian, Russian and English interface. Built with Python 3.15, PySide and uv. Development is supported by donations via [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik).
 
 > **Status:** early development, Phase 0 (skeleton). The app is not usable yet: `uv run nvagik` currently only prints a greeting. See the [Roadmap](#roadmap).

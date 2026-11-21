@@ -104,6 +104,8 @@ The owner has many repositories that use GitHub Actions, so keep this one from a
 - Trigger only on pushes to `main` and on pull requests. Skip docs-only changes (`paths-ignore: ['**.md', 'docs/**']`). No `schedule`, no matrix builds unless a task needs them.
 - Every workflow sets `concurrency` with `cancel-in-progress: true` and `timeout-minutes` (≤ 10), caches uv, and pins actions to commit SHAs with `permissions: contents: read`.
 - Standard GitHub-hosted runners are free for public repositories, but keep the habits anyway: they also protect the owner's private repositories, which share the monthly quota.
+- The only workflow is `.github/workflows/ci.yml` (NVG-8): one `windows-latest` job running `uv sync`, `ruff check`, `ruff format --check` and `pytest`, with a pruned uv cache that only pushes to `main` save. `tests/test_ci_workflows.py` enforces the rules above for every workflow file and also rejects `${{ }}` expressions outside an allowlist, self-hosted runners, `continue-on-error`, `if:` conditions, secrets and unusual YAML spellings. Pins look like `uses: owner/repo@<full sha> # vX.Y.Z`; `/update-deps` refreshes them.
+- Watch the run after a push (it takes a few seconds to appear; `gh run watch` needs a run ID outside a terminal): `id=$(gh run list --workflow ci.yml --commit "$(git rev-parse HEAD)" --limit 1 --json databaseId --jq '.[0].databaseId')`, then `gh run watch "$id" --exit-status --compact`.
 
 ## Claude Code setup in this repository
 

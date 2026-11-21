@@ -4,6 +4,19 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-11-21
+
+### Added
+
+- Continuous integration (NVG-8): `.github/workflows/ci.yml` runs `uv sync`, `ruff check`, `ruff format --check` and `pytest` on `windows-latest` for pushes to `main` and pull requests, skipping docs-only changes. It follows the Actions budget: one job, `timeout-minutes: 10`, older runs cancelled, read-only token, no schedules or matrix. `UV_LOCKED` makes the run fail if `uv.lock` is out of date, and ruff errors appear inline on pull requests. The README shows the CI badge.
+- `tests/test_ci_workflows.py` checks every workflow file against the budget and security rules, failing closed on anything it cannot read: triggers, read-only permissions (no job-level permissions), concurrency, timeouts, GitHub-hosted runners only, actions pinned to full commit SHAs with a `# vX.Y.Z` comment, `${{ }}` expressions from an allowlist only (no event data such as pull request titles, so no script injection), no secrets, no `continue-on-error` or `if:` that could switch checks off, checkout without a stored token, and the uv settings below.
+- `/update-deps` now also refreshes the pinned actions, checks that a new SHA is in the action's own history (or an immutable release) before accepting it, and keeps CI's uv version in step with the local one.
+- TASKS.md: NVG-11 (report outdated action pins at session start), NVG-12 (enforce pinning and allowed actions in the repository settings) and NVG-13 (depend on `pyside6-essentials` to download about 175 MB less per CI run).
+
+### Security
+
+- CI installs uv only in versions whose checksums the pinned `astral-sh/setup-uv` release bundles (`version: latest-known`, `require-checksums: true`). Only pushes to `main` save the uv cache, so pull requests from forks cannot fill or replace it, and caching is off for tag and release events (`enable-cache: auto`). The cache is pruned to locally built wheels, because its key changes with every version bump and a full cache (about 650 MB) would be uploaded on every push and never restored.
+
 ## [0.1.8] - 2026-11-21
 
 ### Added
@@ -98,7 +111,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.5...v0.1.6

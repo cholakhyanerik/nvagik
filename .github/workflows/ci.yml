@@ -1,0 +1,46 @@
+# Lint and tests on every push to main and every pull request (NVG-8).
+# Keep it cheap: Actions minutes are shared with the owner's other
+# repositories (CLAUDE.md, "GitHub Actions budget"). Verify locally first.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "docs/**"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_LOCKED: "1" # fail if uv.lock does not match pyproject.toml
+  RUFF_OUTPUT_FORMAT: github # lint errors appear inline on pull requests
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          version: latest-known # only uv versions whose checksums this pinned release bundles
+          require-checksums: true
+          enable-cache: auto # on, except for risky events such as tags and releases
+          save-cache: ${{ github.event_name == 'push' }} # pull requests only restore main's cache
+          # The key hashes uv.lock, which every version bump changes, so main
+          # rarely restores it: keep only wheels built here, not PyPI downloads.
+          prune-cache: true
+
+      - run: uv sync
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest
