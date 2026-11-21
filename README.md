@@ -11,6 +11,7 @@
 - [Who it is for](#who-it-is-for)
 - [Core principles](#core-principles)
 - [Getting started (development)](#getting-started-development)
+- [Project documents](#project-documents)
 - [Technical rules](#technical-rules)
 - [Roadmap](#roadmap)
 - [Distribution and revenue model](#distribution-and-revenue-model)
@@ -57,13 +58,34 @@ Requirements:
 - [uv](https://docs.astral.sh/uv/)
 
 ```sh
-git clone <repository-url>
+git clone https://github.com/cholakhyanerik/nvagik.git
 cd nvagik
 uv sync          # create the virtual environment and install dependencies
 uv run nvagik    # run the app
 ```
 
-To add a dependency, use `uv add <package>`. Don't use `pip` directly.
+Day-to-day commands:
+
+| Purpose | Command |
+| --- | --- |
+| Run the tests | `uv run pytest` |
+| Lint | `uv run ruff check .` |
+| Format | `uv run ruff format .` |
+| Add a dependency | `uv add <package>` (dev tools: `uv add --dev <package>`) |
+| Remove build and test junk | `py -3 scripts/clean.py` |
+
+Use uv for everything; don't use `pip` directly.
+
+## Project documents
+
+| Document | What it contains |
+| --- | --- |
+| [TASKS.md](TASKS.md) | Backlog of small, Jira-style tasks for everything needed to ship 1.0 |
+| [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Decisions made during development, with reasons |
+| [CLAUDE.md](CLAUDE.md) | Development rules for AI-assisted work (Claude Code): workflow, architecture, security, performance budgets |
+
+Versions follow [Semantic Versioning](https://semver.org/): before 1.0, every finished task bumps the patch version and every finished roadmap phase bumps the minor version.
 
 ## Technical rules
 
@@ -110,7 +132,7 @@ The goal is full coverage of the core functionality of Logic Pro, FL Studio and 
 ### Distribution
 
 - **Microsoft Store** is the main distribution channel.
-- **Landing page** (later). It will have the app's description, screenshots, and links to the Store and to donation or purchase. The domains `nvagik.com` and `nvagik.app` were unregistered on 2026-11-21 (see [Name availability check](#name-availability-check)).
+- **Landing page** (later). It will have the app's description, screenshots, and links to the Store and to donation or purchase. It will be hosted on Cloudflare (Workers static assets), with the domain bought through Cloudflare Registrar. The domains `nvagik.com` and `nvagik.app` were unregistered on 2026-11-21 (see [Name availability check](#name-availability-check)).
 - **GitHub** hosts the open repository (the code).
 
 ### Revenue model

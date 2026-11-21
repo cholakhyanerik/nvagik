@@ -11,3 +11,20 @@ wheels/
 
 # Private business and payment details (never commit)
 PRIVATE.md
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets and private documents (never commit; the guard hook also blocks them)
+.env
+.env.*
+!.env.example
+*.pdf
+*.pem
+*.key
+
+# Personal Claude Code settings
+.claude/settings.local.json
