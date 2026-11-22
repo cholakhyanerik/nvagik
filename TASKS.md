@@ -24,12 +24,6 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Project setup and repository
 
-### NVG-17: Require CI approval for all external contributors
-**Type:** Chore · **Priority:** P2 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** —
-- [ ] Fork pull request runs wait for approval for every external contributor, not only first-time ones, so no stranger's code runs in CI before the agent has read it (`/next-task` approves the run). Claude Code's permission check refused this settings change on 2026-11-22. **Owner steps:** in PowerShell run `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions/fork-pr-contributor-approval -f approval_policy=all_external_contributors` (it prints nothing when it works). Or open `https://github.com/cholakhyanerik/nvagik/settings/actions`, under "Approval for running fork pull request workflows from contributors" choose **Require approval for all external contributors** and click **Save**.
-- [ ] `gh api repos/cholakhyanerik/nvagik/actions/permissions/fork-pr-contributor-approval --jq .approval_policy` prints `all_external_contributors`; the check is added to the CLAUDE.md security-features line.
-
-
 ### NVG-16: Pre-check contributors' pull requests with a script
 **Type:** Task · **Priority:** P2 · **Size:** M · **Status:** To Do · **Depends on:** —
 - [ ] `scripts/check_pr.py <n>` (standard library, run with `py -3 -I`) checks a fetched pull request (`refs/pr/<n>`) without the agent reading it and prints only numbers and fixed words: every path from `git diff --raw --no-renames -z origin/main...refs/pr/<n>` is an allowed regular text file (the `/next-task` review step 4 list), the size of the diff, and suspicious content (control, zero-width or bidi characters, `<!--` in Markdown, imports of `subprocess`, `socket`, `ctypes`, `winreg`, `urllib` or `importlib`, `os.system`, `eval`/`exec`, reads of `PRIVATE`, `.claude`, `.git` or environment variables). `/next-task` runs it before reading a diff, and a pull request that fails gets a standard reply, so hostile diffs are not read every session.

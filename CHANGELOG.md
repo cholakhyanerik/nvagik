@@ -4,6 +4,12 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-11-22
+
+### Security
+
+- CI runs of fork pull requests now wait for approval for every external contributor, not only first-time ones (NVG-17, applied by the owner), so no stranger's code runs in CI before the agent has read the diff. CLAUDE.md lists the check command.
+
 ## [0.1.15] - 2026-11-22
 
 ### Security
@@ -196,7 +202,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.12...v0.1.13
