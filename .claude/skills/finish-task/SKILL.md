@@ -31,7 +31,7 @@ Fix every confirmed finding. Ideas that don't belong to this task become TASKS.m
 
 ## 3. Update the documents (all in English)
 
-1. **TASKS.md:** delete the finished task's card and its line in "Next up"; add new cards for improvements found (use `/add-task`); refill "Next up" with up to 7 open tasks whose dependencies are done.
+1. **TASKS.md:** delete the finished task's card and its line in "Next up"; add new cards for improvements found (use `/add-task`); refill "Next up" with up to 7 open tasks whose dependencies are done and that no contributor has claimed (the "skip" list in the SessionStart "GitHub claims" line).
 2. **Version:** `uv version --bump patch` for a task; `uv version --bump minor` for a phase exit task; `uv version 1.0.0` for the release.
 3. **CHANGELOG.md:** add `## [X.Y.Z] - YYYY-MM-DD` under `## [Unreleased]` with `Added` / `Changed` / `Fixed` / `Removed` / `Security` sections, mention task IDs, move any lines left under `## [Unreleased]` (from merged pull requests, see CONTRIBUTING.md) into the new version, and add the compare link at the bottom (`[X.Y.Z]: https://github.com/cholakhyanerik/nvagik/compare/vPREV...vX.Y.Z`).
 4. **README.md:** update the status line, features, commands or anything the task changed.

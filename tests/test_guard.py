@@ -127,7 +127,7 @@ def test_clean_text_passes(guard):
 def test_private_values_are_extracted(guard, tmp_path):
     (tmp_path / "PRIVATE.md").write_text(
         "- Account: 98765432109876\n- Reg: 123.4567890\n- SWIFT: ABCDEF12 (ABCDEF12XXX)\n"
-        "- Date: 2026-01-01\n- Word: PRIVATEMD\n",
+        "- Date: 2026-01-01\n- Word: PRIVATEMD\n- Mail: " + "owner" + "@" + "example.am\n",
         encoding="utf-8",
     )
     assert guard.private_values(tmp_path) == {
@@ -135,6 +135,7 @@ def test_private_values_are_extracted(guard, tmp_path):
         "123.4567890",
         "ABCDEF12",
         "ABCDEF12XXX",
+        "owner" + "@" + "example.am",
     }
 
 
@@ -198,3 +199,207 @@ def test_decode_small_reads_text_encodings_and_skips_real_binaries(guard):
     assert guard.decode_small(b"plain") == "plain"
     assert guard.decode_small(b"RIFF\x00\x00WAVE") is None
     assert guard.decode_small(b"RIFF\x24\x00\x00\x00WAVEfmt " + bytes(64)) is None
+
+
+@pytest.mark.parametrize(
+    ("command", "files"),
+    [
+        ("gh issue comment 5 --body-file a.md", ["a.md"]),
+        ("gh pr review 7 -F a.md && gh pr comment 7 -Fb.md", ["a.md", "b.md"]),
+        ("gh issue create --body-file=a.md --title t", ["a.md"]),
+        ("gh issue comment 5 --body-file -", []),
+        ("gh api x -F body=@a.md -f title=t --input b.json", ["a.md", "b.json"]),
+        ("gh api x -F foo=bar", []),  # -F is a field for api, not a file
+        ("gh api x -f body=@alice", []),  # a raw field never reads a file
+        ("gh workflow run ci.yml -F x=1", []),  # -F is an input here
+        (r"C:\tools\gh.exe pr comment 7 -F C:\tmp\a.md", ["C:/tmp/a.md"]),
+        ("gh -R o/r issue comment 5 -F a.md", ["a.md"]),
+        ("gh release create v1 --notes-file n.md", ["n.md"]),
+        ("gh pr merge 5 --squash --subject 'fix(x): y (NVG-5)' --body-file m.md", ["m.md"]),
+        ("gh pr comment 5 --body-file", [""]),
+    ],
+)
+def test_gh_text_files(guard, command, files):
+    assert guard.gh_text_files(command) == files
+
+
+@pytest.mark.parametrize(
+    ("command", "write"),
+    [
+        ("gh issue comment 5 -b hi", True),
+        ("gh issue new -b hi", True),
+        ("gh issue reopen 5 --comment hi", True),
+        ("gh pr merge 7 --squash", True),
+        ("gh pr review 7 --approve", True),
+        ("gh issue close 5 --comment bye", True),
+        ("gh -R o/r issue comment 5 -b hi", True),
+        ("GH issue comment 5 -b hi", True),
+        ('"C:/Program Files/GitHub CLI/gh.exe" issue comment 5 -b hi', True),
+        ("gh release create v1 --notes hi", True),
+        ("gh gist edit 1 -a f.md", True),
+        ("gh repo edit --description hi", True),
+        ("gh label create x --description hi", True),
+        ("gh workflow run ci.yml -f x=1", True),
+        ("gh api -X POST repos/o/r/actions/runs/1/approve", True),
+        ("gh api repos/o/r/issues/5/comments -f body=hi", True),
+        ("gh api graphql -F query=@q.graphql", True),
+        ("gh api repos/o/r --input body.json", True),
+        ("gh api repos/o/r", False),
+        ("gh api -X GET repos/o/r", False),
+        ("gh api --paginate repos/o/r/issues --jq '.[].number'", False),
+        ("gh pr view 7", False),
+        ("gh pr diff 7", False),
+        ("gh issue list", False),
+        ("gh run watch 1", False),
+    ],
+)
+def test_gh_write_detection(guard, command, write):
+    found = guard.GH_WRITE.search(command) or guard.GH_API_WRITE.search(command)
+    assert bool(found) is write
+
+
+@pytest.mark.parametrize(
+    ("command", "problem"),
+    [
+        ('gh issue comment 5 --body "$(cat notes.md)"', "command substitution"),
+        ("gh issue comment 5 --body `cat notes.md`", "command substitution"),
+        ("gh issue comment 5 --body $env:NOTES", "command substitution or a variable"),
+        ('gh issue comment 5 --body "$NOTES"', "command substitution or a variable"),
+        ("gh issue comment 5 --body %NOTES%", "command substitution or a variable"),
+        ("gh issue comment 5 --body (Get-Content notes.md -Raw)", "parentheses"),
+        ("gh issue comment 5 -F - < notes.md", "a redirect"),
+        ("cat notes.md | gh issue comment 5 -F -", "standard input"),
+        ("gh api repos/o/r/issues/5/comments -F body=@-", "standard input"),
+        ("echo hi >> reply.md && gh issue comment 5 -F reply.md", "a redirect"),
+        ("cd sub && gh issue comment 5 -F reply.md", "a change of directory"),
+        ("Set-Location sub; gh issue comment 5 -F reply.md", "a change of directory"),
+        ("gh issue comment 5 -b hi --attach notes.md#x", "--attach"),
+    ],
+)
+def test_post_problems(guard, command, problem):
+    assert any(problem in found for found in guard.post_problems(command))
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "gh issue comment 5 --body 'Thanks! $5 (or more) > nothing'",
+        'gh issue comment 5 --body "Thanks (really)"',
+        "gh pr merge 5 --squash --match-head-commit 0123abc --subject 'fix(x): y (NVG-5)' -F m.md",
+        "gh api -X POST repos/o/r/actions/runs/1/approve 2>&1",
+        "gh api repos/o/r/issues/5/comments -f body='@alice thanks'",
+    ],
+)
+def test_clean_posts_have_no_problems(guard, command):
+    assert guard.post_problems(command) == []
+
+
+def test_stdin_from_a_heredoc_is_fine(guard):
+    command = "gh issue comment 5 --body-file - <<'EOF'\nThanks!\nEOF"
+    text = guard.strip_heredocs(command)
+    assert guard.post_problems(text, heredoc=True) == []
+    assert guard.post_problems(text) != []
+
+
+@pytest.mark.parametrize(
+    ("command", "kept"),
+    [
+        ("git commit -F - <<'EOF'\nmsg\nEOF", "git commit -F - \n"),
+        # The rest of the `<<EOF` line is still a command.
+        ("cat <<'EOF' | git commit -F -\nmsg\nEOF", "cat  | git commit -F -\n"),
+        ("cat <<'EOF' > PRIVATE.md\nx\nEOF", "cat  > PRIVATE.md\n"),
+        # `<<EOF` in quotes or a comment starts no heredoc: the next lines are commands.
+        ("echo '<<EOF'\ngit push\nEOF", "echo '<<EOF'\ngit push\nEOF"),
+        ("echo x # <<EOF\ngit push\nEOF", "echo x # <<EOF\ngit push\nEOF"),
+        ("git commit -F - @'\nmsg\n'@", "git commit -F - \n"),
+    ],
+)
+def test_strip_heredocs(guard, command, kept):
+    assert guard.strip_heredocs(command) == kept
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "gh auth token",
+        "gh auth status --show-token",
+        "gh auth status -t",
+        "git credential fill",
+        "gh pr checkout 13",
+        "gh co 13",
+        "git checkout refs/pr/13",
+        "git switch --detach refs/pr/13",
+        "git worktree add ../pr13 refs/pr/13",
+        "git merge refs/pr/13",
+        "git pull origin pull/13/head",
+        "gh pr diff 13 | git apply",
+        "gh alias set c 'issue comment'",
+        "gh extension install someone/gh-x",
+        "cat <<'EOF' && rm PRIVATE.md\nx\nEOF",
+        "cat <<'EOF' > PRIVATE.md\nx\nEOF",
+    ],
+)
+def test_secret_and_pull_request_commands_are_blocked(guard, command):
+    assert guard.check_command(command)
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "gh auth status",
+        "git fetch origin +pull/13/head:refs/pr/13",
+        "git diff --text --no-textconv --no-ext-diff origin/main...refs/pr/13",
+        "git diff --raw --no-renames origin/main...refs/pr/13",
+        "git update-ref -d refs/pr/13",
+        "gh pr diff 13 --name-only",
+        "git pull --rebase",
+        "gh config get git_protocol",
+    ],
+)
+def test_pull_request_review_commands_are_allowed(guard, command):
+    assert guard.check_command(command) is None
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "git diff --text --no-textconv --no-ext-diff origin/main...refs/pr/12 | git apply",
+        "git show refs/pr/12 | git apply",
+        "git format-patch --stdout origin/main..refs/pr/12 | git am",
+    ],
+)
+def test_applying_a_fetched_pull_request_is_blocked(guard, command):
+    assert guard.check_command(command)
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "git merge-base origin/main refs/pr/12",
+        "git apply fix.patch",
+        "git diff origin/main...refs/pr/12 | head -50",
+    ],
+)
+def test_reading_a_fetched_pull_request_is_allowed(guard, command):
+    assert guard.check_command(command) is None
+
+
+def test_a_heredoc_inside_command_substitution_is_stripped(guard):
+    command = "git commit -m \"$(cat <<'EOF'\ndocs: never run gh auth token\nEOF\n)\""
+    assert "auth token" not in guard.strip_heredocs(command)
+    assert guard.check_command(command) is None
+
+
+def test_network_paths_are_never_opened(guard):
+    assert guard.is_network_path("//host/share/x.md")
+    assert guard.is_network_path(r"\\host\share\x.md")
+    assert not guard.is_network_path("C:/tmp/x.md")
+    assert not guard.is_network_path("docs/x.md")
+
+
+def test_e_mail_scan_is_fast_on_long_runs(guard):
+    import time
+
+    start = time.perf_counter()
+    assert guard.scan_text("a." * 50_000 + " %a" * 10_000, set()) == []
+    assert time.perf_counter() - start < 1

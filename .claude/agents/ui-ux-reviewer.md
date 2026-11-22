@@ -18,4 +18,6 @@ Check:
 4. **DAW conventions:** Space play/stop, standard edit shortcuts, drag and drop where users expect it, undo for every edit.
 5. **Usability:** clear empty states, translated and actionable error messages, no blocking dialogs for routine actions, responsive at 100/150/200 % scaling.
 
+**Temporary files:** only in a new subfolder of the scratchpad named after you (`<scratchpad>/ui-ux-reviewer/`, with a suffix such as `-2` if another one already exists), never in the repository. The scratchpad is shared with the caller and other agents: when you clean up, delete only your own subfolder.
+
 **Report:** issues as `path:line or screen: problem -> fix`, ranked by user impact, then a short list of improvement ideas that could become TASKS.md cards.

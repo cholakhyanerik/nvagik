@@ -4,7 +4,7 @@ Thank you for helping! Nvagik is a free, open-source DAW for Windows, written in
 
 ## Before you start
 
-- **Find or propose a task.** The backlog to 1.0 is in [TASKS.md](TASKS.md). Cards listed in its "Next up" section are about to be worked on by the maintainer, so pick another card or a bug you found. Before you start anything bigger than a small fix, open an [issue](https://github.com/cholakhyanerik/nvagik/issues) that names the card and what you plan to do, and wait for an answer, so work is not done twice.
+- **Find or propose a task.** The backlog to 1.0 is in [TASKS.md](TASKS.md). Cards listed in its "Next up" section are about to be worked on by the maintainer, so pick another card or a bug you found. Before you start anything bigger than a small fix, open an [issue](https://github.com/cholakhyanerik/nvagik/issues) that names the card (for example `NVG-205`) and what you plan to do, and wait for an answer, so work is not done twice. While that issue or your pull request is open and active, the maintainer leaves the card to you. Name one card per issue, or at most three closely related ones: an issue naming more is not read as a claim, and one person can hold at most three cards at a time. A claim with no activity (comments or commits) for 30 days lapses, and the card is free again.
 - **Security problems are never reported in public.** Follow [SECURITY.md](SECURITY.md) instead.
 
 ## Set up
@@ -18,7 +18,7 @@ uv sync          # create .venv and install everything, including dev tools
 uv run nvagik    # run the app
 ```
 
-Use uv for everything and never call `pip`: add a dependency with `uv add <package>` (dev tools: `uv add --dev <package>`) and commit the updated `uv.lock`.
+Use uv for everything and never call `pip`. A change that needs a new dependency starts with an issue: the maintainer checks the package and adds it with `uv add`, because pull requests that change `pyproject.toml` or `uv.lock` are not merged as they are (see below).
 
 ## Check your change
 
@@ -30,7 +30,7 @@ uv run ruff check .    # lint
 uv run pytest          # all tests; widget tests run headless, no windows open
 ```
 
-CI runs the same checks on pull requests that change code; for a first-time contributor, the run starts after the maintainer approves it. Pull requests that change only Markdown files or `docs/` skip CI, so run `uv run pytest` yourself for them too: some tests check the Markdown files.
+CI runs the same checks on pull requests that change code; for a first-time contributor, the run starts after the maintainer approves it. Changes to Markdown files alone (such as your `CHANGELOG.md` line) skip CI, so run `uv run pytest` yourself: some tests check the Markdown files.
 
 ## Project rules
 
@@ -63,6 +63,8 @@ For pull requests:
 - Branch from `main` and keep each pull request small, about one task or fix.
 - Describe what changed and why, and how you tested it.
 - Add a line under `## [Unreleased]` in [CHANGELOG.md](CHANGELOG.md). The maintainer moves it into the next version.
+- Change only the app code in `src/nvagik/`, tests in `tests/test_*.py`, text test files in `tests/fixtures/` and your line in `CHANGELOG.md`, with no binary files or symlinks. Pull requests that touch the tooling or the project documents (`.claude/`, `.github/`, `scripts/`, `pyproject.toml`, `uv.lock`, `tests/conftest.py`, the tests of the tooling such as `tests/test_guard*.py`, `CLAUDE.md`, `TASKS.md`, `README.md`, `docs/` and the like) are not merged as they are, for security reasons. Suggest such a change in an issue instead; the maintainer makes it.
+- The maintainer's assistant reviews your pull request and the maintainer merges it. Push new commits to answer a review; a force push is fine.
 - To keep your e-mail address private, commit with your [GitHub noreply address](https://docs.github.com/en/account-and-profile/how-tos/email-preferences/setting-your-commit-email-address).
 
 The maintainer develops with Claude Code, so the repository contains a `.claude/` folder with hooks and agents. You don't need it: the hooks only run inside Claude Code.

@@ -16,4 +16,6 @@ Ground rules:
 - If an upgrade cannot work yet (for example no wheels for the new Python), keep the old version, record the decision with the reason in `docs/DECISIONS.md`, and add a follow-up card to `TASKS.md`.
 - Don't commit; the caller does that through `/finish-task`.
 
+**Temporary files:** only in a new subfolder of the scratchpad named after you (`<scratchpad>/deps-updater/`, with a suffix such as `-2` if another one already exists), never in the repository. The scratchpad is shared with the caller and other agents: when you clean up, delete only your own subfolder.
+
 **Report:** a table of package (or Python), old version, new version and notes on code changes, plus anything that was kept back and why.

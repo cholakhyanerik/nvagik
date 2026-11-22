@@ -4,6 +4,34 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.13] - 2026-11-22
+
+### Added
+
+- The SessionStart hook reports open issues and pull requests, oldest first, and the cards they claim (NVG-14), in parallel with the other GitHub checks. Their titles and bodies are untrusted, so the hook prints only numbers, the `NVG-<id>`s it extracts itself (ASCII digits only) and fixed words. A claim counts only for a card still in TASKS.md and not in "Next up", from an item naming at most 3 cards, by someone who is not a maintainer or a bot, not labelled `not-a-claim`, with activity in the last 30 days, and for at most 3 cards per person; the first claim on a card wins. Each skipped card names its issue (`NVG-205 (#12)`), draft pull requests are not offered for review, and the item list stops after 20. When `gh` fails or returns something unexpected, it says so in one line.
+- `/next-task` reviews up to 2 contributors' pull requests per session before task work, without ever checking them out, applying or running them: it reads the fetched diff (`refs/pr/<n>`) in full, checks paths and file modes, lets CI run the code, approves only the first-time CI run for the reviewed commit, and passes the same rules to its reviewer agents. It approves a good pull request and reports it to the owner, who merges it; it never merges one itself. It skips pull requests still waiting for the contributor, skips claimed cards (also when refilling "Next up"), confirms a real claim once or labels a mere mention `not-a-claim`, releases pull requests the owner merged, and runs the check of `Blocked (owner)` cards every session.
+- TASKS.md: NVG-16 (a script that pre-checks contributors' pull requests, so hostile diffs are not read every session). NVG-12 also asks the owner to require approval of CI runs for all external contributors.
+
+### Changed
+
+- CONTRIBUTING.md: claim limits (one to three cards per issue, three per person, 30 days without activity lapses), pull requests may change only the app code, tests (not the tooling tests), text test files and the CHANGELOG, the maintainer's assistant reviews and the maintainer merges, and new dependencies start with an issue.
+- CLAUDE.md Security: contributors' issues and pull requests are untrusted; read pull requests only as a fetched diff, never check them out or run them; the owner merges.
+- NVG-12 is `Blocked (owner)`: Claude Code's permission check refused the repository settings change again, so the card now holds the steps for the owner.
+- Agents keep their temporary files in their own subfolder of the scratchpad and delete only that: a reviewer cleaning up had removed the caller's drafts.
+
+### Security
+
+- The guard scans the text of every `gh` call, recognised in any case, quoted, as a full path and with `-R owner/repo`. Calls that publish text (issue and pull request comments, reviews, edits, merges and reopens, releases, gists, repository settings, labels, workflow inputs, `gh api` writes) also scan every file they read (`--body-file`, `-F`, `--notes-file`, `--input`, `field=@file`) and may not hide text: command substitution, variables, subexpressions, redirects, directory changes, `--attach`, standard input other than a heredoc, and missing, binary or unclear text files are blocked. The agent writes such replies right after reading strangers' text, the classic path from prompt injection to a leak.
+- The guard blocks `gh auth token`, `gh auth status --show-token`, `git credential fill`, `gh pr checkout` (and the `gh co` alias), gh aliases and extensions, piping a pull request's diff (`gh pr diff`, or `git diff`, `git show`, `git format-patch` of `refs/pr/` or `pull/`) into `git apply` or `git am`, and git commands that put `refs/pr/` or `pull/` commits into a work tree, where a pull request's hooks would run at once.
+- The guard never opens network paths (`\\host\share`, `//host/share`) named in a command: on Windows that would send the login to the host before any prompt.
+- The guard also treats e-mail addresses from PRIVATE.md as private values, and `ya`, `inbox`, `list`, `bk` and `rambler` addresses as personal.
+
+### Fixed
+
+- The guard dropped the rest of a `<<EOF` line together with the heredoc body, so `cat <<'EOF' | git commit -F -` skipped the commit scan and `cat <<'EOF' > PRIVATE.md` or `cat <<'EOF' && rm PRIVATE.md` were allowed. That text now stays, and a `<<EOF` inside quotes or a comment no longer hides the lines after it (inside `"$(...)"` it is still a heredoc, as in bash).
+- The guard's personal e-mail pattern took quadratic time on long runs like `a.a.a...` (100 KB: 49 s, over the hook's timeout); it now finds the same addresses in linear time.
+- The SessionStart hook split `git status` output with `str.splitlines()`, which also cuts at U+2028, U+2029 and U+0085, characters git allows in branch names: such a branch name could carry free text into the report. It now splits at `\n` only and does not print unusual branch names. The new claims check splits gh output the same way.
+
 ## [0.1.12] - 2026-11-22
 
 ### Added
@@ -147,7 +175,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.12...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.13...HEAD
+[0.1.13]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.9...v0.1.10

@@ -18,4 +18,6 @@ Steps:
    - Keep placeholders (`{name}`, `%n`), accelerators (`&`) and punctuation consistent with the source; keep strings about as short as the English.
 4. **Compile and test:** `scripts/i18n.py build` (NVG-111), then `uv run pytest`.
 
+**Temporary files:** only in a new subfolder of the scratchpad named after you (`<scratchpad>/i18n-translator/`, with a suffix such as `-2` if another one already exists), never in the repository. The scratchpad is shared with the caller and other agents: when you clean up, delete only your own subfolder.
+
 **Report:** how many strings were added or changed per language, any hard-coded strings fixed, and terms that should be added to the glossary.

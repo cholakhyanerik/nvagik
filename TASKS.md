@@ -14,13 +14,13 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-14: Respect cards that contributors have claimed
-2. NVG-100: App bootstrap module
-3. NVG-120: Design system v0
-4. NVG-130: Add sounddevice
-5. NVG-400: Spike: MIDI libraries on Python 3.15
-6. NVG-610: Spike: VST3 hosting
-7. NVG-20: Decide the minimum Windows version
+1. NVG-100: App bootstrap module
+2. NVG-120: Design system v0
+3. NVG-130: Add sounddevice
+4. NVG-400: Spike: MIDI libraries on Python 3.15
+5. NVG-610: Spike: VST3 hosting
+6. NVG-20: Decide the minimum Windows version
+7. NVG-11: Report outdated GitHub Actions pins at session start
 
 ## Project setup and repository
 
@@ -30,14 +30,14 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 - [ ] Tested in `tests/test_session_start.py` with `gh` faked.
 
 ### NVG-12: Enforce action pinning in the repository settings
-**Type:** Chore · **Priority:** P2 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] Repository Actions settings require full-SHA pins and allow only GitHub-owned actions plus `astral-sh/setup-uv@*`: `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions -F enabled=true -f allowed_actions=selected -F sha_pinning_required=true`, then `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions/selected-actions -F github_owned_allowed=true -F verified_allowed=false -f 'patterns_allowed[]=astral-sh/setup-uv@*'`. `tests/test_ci_workflows.py` only catches drift, because a pull request can edit the test. On 2026-11-21 Claude Code's permission check refused this settings change in an unattended session, so it needs the owner's approval of the command.
-- [ ] Checked with `gh api repos/cholakhyanerik/nvagik/actions/permissions`; the check is added to the CLAUDE.md security-features line and recorded in docs/DECISIONS.md; a CI run still passes.
+**Type:** Chore · **Priority:** P2 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** —
+- [ ] Repository Actions settings require full-SHA pins and allow only GitHub-owned actions plus `astral-sh/setup-uv@*`: `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions -F enabled=true -f allowed_actions=selected -F sha_pinning_required=true`, then `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions/selected-actions -F github_owned_allowed=true -F verified_allowed=false -f 'patterns_allowed[]=astral-sh/setup-uv@*'`. `tests/test_ci_workflows.py` only catches drift, because a pull request can edit the test. On 2026-11-21 and again on 2026-11-22 Claude Code's permission check refused this settings change, even with the command in the owner's message, so the owner runs it. **Owner steps:** open PowerShell in `C:\dev\nvagik` (or any folder; `gh` is logged in as `cholakhyanerik`), paste the two commands above one after the other, and check that the first one prints nothing and the second prints nothing (an error message means it did not apply). Then open `https://github.com/cholakhyanerik/nvagik/settings/actions`, and under "Approval for running fork pull request workflows from contributors" choose **Require approval for all external contributors** and click **Save**, so no contributor's pull request runs in CI before the agent has read it. The agent does the rest in the next session (or approve the commands when Claude Code asks in an interactive session).
+- [ ] Checked with `gh api repos/cholakhyanerik/nvagik/actions/permissions --jq .sha_pinning_required` (`true`) and `gh api repos/cholakhyanerik/nvagik/actions/permissions/fork-pr-contributor-approval --jq .approval_policy` (`all_external_contributors`); the checks are added to the CLAUDE.md security-features line and recorded in docs/DECISIONS.md; a CI run still passes.
 
-### NVG-14: Respect cards that contributors have claimed
-**Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
-- [ ] `session_start.py` reports open issues and pull requests (via `gh`, in parallel with the other checks, short timeout, quiet when offline) with the `NVG-<id>` they name; titles and bodies are untrusted text, so only numbers and IDs are reported. `/next-task` reviews open pull requests before task work and skips a card named in an open issue or pull request (CONTRIBUTING.md asks contributors to claim cards that way).
-- [ ] Tested in `tests/test_session_start.py` with `gh` faked.
+### NVG-16: Pre-check contributors' pull requests with a script
+**Type:** Task · **Priority:** P2 · **Size:** M · **Status:** To Do · **Depends on:** —
+- [ ] `scripts/check_pr.py <n>` (standard library, run with `py -3 -I`) checks a fetched pull request (`refs/pr/<n>`) without the agent reading it and prints only numbers and fixed words: every path from `git diff --raw --no-renames -z origin/main...refs/pr/<n>` is an allowed regular text file (the `/next-task` review step 4 list), the size of the diff, and suspicious content (control, zero-width or bidi characters, `<!--` in Markdown, imports of `subprocess`, `socket`, `ctypes`, `winreg`, `urllib` or `importlib`, `os.system`, `eval`/`exec`, reads of `PRIVATE`, `.claude`, `.git` or environment variables). `/next-task` runs it before reading a diff, and a pull request that fails gets a standard reply, so hostile diffs are not read every session.
+- [ ] Tested in `tests/test_check_pr.py` with git faked; whether CI's uv cache saved by a push that contains a contributor's code is a risk is checked and recorded in docs/DECISIONS.md.
 
 ### NVG-15: Repository social preview image
 **Type:** Chore · **Priority:** P3 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-122

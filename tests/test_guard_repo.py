@@ -310,3 +310,126 @@ def test_an_already_pushed_blob_tag_only_matters_when_tags_are_pushed(repo):
 def test_gh_upload_of_private_file_is_blocked(repo):
     (repo / "doc.pdf").write_bytes(b"%PDF-1.7")
     assert "private file doc.pdf" in run_guard("gh release upload v1 doc.pdf", repo)
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        f'gh issue comment 5 --body "thanks {TOKEN}"',
+        f"gh pr review 7 --request-changes -b 'mail me at {PERSONAL}'",
+        f"gh api repos/o/r/issues/5/comments -f body='{TOKEN}'",
+        f"gh pr merge 7 --squash --subject 'feat: x (NVG-1)' --body 'see {PERSONAL}'",
+        f"gh issue comment 5 --body-file - <<'EOF'\nhello {TOKEN}\nEOF",
+    ],
+)
+def test_secret_in_public_gh_text_is_blocked(repo, command):
+    assert "in the command" in run_guard(command, repo)
+
+
+def test_private_value_in_a_comment_is_blocked(repo):
+    (repo / "PRIVATE.md").write_text("Account: 98765432109876\n", encoding="utf-8")
+    reason = run_guard("gh issue comment 5 --body 'account 98765432109876'", repo)
+    assert "a value from PRIVATE.md in the command" in reason
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "gh pr review 7 --comment --body-file reply.md",
+        "gh issue comment 5 -F reply.md",
+        "gh issue comment 5 -Freply.md",
+        "gh issue create --title x --body-file=reply.md",
+        "gh api repos/o/r/issues/5/comments -F body=@reply.md",
+        "gh api repos/o/r/issues/5/comments --input reply.md",
+        "cat reply.md | gh issue comment 5 --body-file -",
+    ],
+)
+def test_secret_in_a_gh_text_file_is_blocked(repo, command):
+    (repo / "reply.md").write_text(f"Thanks!\n{TOKEN}\n", encoding="utf-8")
+    assert "a GitHub token in reply.md" in run_guard(command, repo)
+
+
+def test_missing_or_binary_gh_text_file_is_blocked(repo):
+    reason = run_guard("echo hi > new.md && gh issue comment 5 --body-file new.md", repo)
+    assert "text file new.md for gh not found" in reason
+    (repo / "blob.md").write_bytes(b"\x00\x01\x02\x03" * 100)
+    assert "blob.md for gh is not readable text" in run_guard("gh pr comment 1 -F blob.md", repo)
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "gh issue comment 5 --body-file reply.md",
+        "gh pr merge 7 --squash --match-head-commit abc --subject 'feat: x (NVG-1)' -F reply.md",
+        "gh api repos/cholakhyanerik/nvagik/actions/runs/137177925124/approve -X POST",
+        "gh api repos/o/r/issues --jq '.[].number'",
+        "gh pr view 7 --json headRefOid",
+        "gh issue list --search NVG-205 --json number --jq '.[].number'",
+    ],
+)
+def test_clean_gh_text_is_allowed(repo, command):
+    (repo / "reply.md").write_text("Thanks, the card is yours.\n", encoding="utf-8")
+    assert run_guard(command, repo) is None
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        # The rest of the `<<EOF` line is a command (it used to be dropped with the body).
+        f"cat <<'EOF' | gh issue comment 5 --body-file -\nhello {TOKEN}\nEOF",
+        # A `<<EOF` in quotes or a comment hides nothing.
+        f"echo '<<EOF'\ngh issue comment 5 --body 'x {TOKEN}'\nEOF",
+        f"echo hi # <<EOF\ngh issue comment 5 --body 'x {TOKEN}'\nEOF",
+        f"gh -R o/r issue comment 5 --body '{TOKEN}'",
+        f"GH issue comment 5 --body '{TOKEN}'",
+        f"gh issue new --title x --body '{TOKEN}'",
+        f"gh release create v1 --notes '{TOKEN}'",
+        f"gh repo edit --description '{TOKEN}'",
+        f"gh run view 1 --log '{TOKEN}'",  # any gh call is scanned
+    ],
+)
+def test_more_secrets_in_gh_text_are_blocked(repo, command):
+    assert "a GitHub token in the command" in run_guard(command, repo)
+
+
+def test_commit_after_a_heredoc_on_the_same_line_is_scanned(repo):
+    (repo / "leak.txt").write_text(f"{TOKEN}\n", encoding="utf-8")
+    reason = run_guard("git add -A\ncat <<'EOF' | git commit -F -\nmsg\nEOF", repo)
+    assert "a GitHub token in leak.txt" in reason
+
+
+def test_body_file_after_quoted_parentheses_is_scanned(repo):
+    (repo / "m.md").write_text(f"{TOKEN}\n", encoding="utf-8")
+    command = "gh pr merge 5 --squash --subject 'fix(x): y (NVG-5)' --body-file m.md"
+    assert "a GitHub token in m.md" in run_guard(command, repo)
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "gh issue comment 5 --body-file reply.md --attach PRIVATE.md#x",
+        "cd sub && gh issue comment 5 -F reply.md",
+        "gh issue comment 5 --body (Get-Content reply.md -Raw)",
+        'gh issue comment 5 --body "$(cat reply.md)"',
+        "gh api user/emails --jq '.[].email' | gh issue comment 5 -F -",
+    ],
+)
+def test_hidden_gh_text_is_blocked(repo, command):
+    (repo / "reply.md").write_text("Thanks!\n", encoding="utf-8")
+    assert "possible leak" in run_guard(command, repo)
+
+
+def test_reading_gh_output_into_a_file_is_allowed(repo):
+    (repo / "emails.txt").write_text(f"{PERSONAL}\n", encoding="utf-8")  # an earlier run
+    assert run_guard("gh api user/emails --jq '.[].email' > emails.txt", repo) is None
+
+
+def test_api_write_with_a_pipe_in_the_jq_filter_is_scanned(repo):
+    (repo / "reply.md").write_text(f"{TOKEN}\n", encoding="utf-8")
+    command = "gh api repos/o/r/issues/5/comments --jq '.url|.' -F body=@reply.md"
+    assert "a GitHub token in reply.md" in run_guard(command, repo)
+
+
+def test_network_body_file_is_blocked_without_opening_it(repo):
+    reason = run_guard("gh issue comment 5 --body-file //host/share/x.md", repo)
+    assert "network path //host/share/x.md" in reason
