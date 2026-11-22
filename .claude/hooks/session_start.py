@@ -1,9 +1,11 @@
-"""SessionStart hook: Python and dependency drift, GitHub security and claims, git, next tasks.
+"""SessionStart hook: Python, dependency and action pin drift, GitHub security and claims,
+git, next tasks.
 
 Implements CLAUDE.md rules 4 (security: private vulnerability reports and
 Dependabot alerts, see SECURITY.md), 5 (Python follows the system), 6
-(dependencies stay current) and 9 (TASKS.md drives the work, minus the cards
-contributors have claimed, see CONTRIBUTING.md). Standard library only: it runs with
+(dependencies and pinned GitHub Actions stay current) and 9 (TASKS.md drives the
+work, minus the cards contributors have claimed, see CONTRIBUTING.md). A check that
+fails costs its own line, never the whole report. Standard library only: it runs with
 the system interpreter (`py -3`), not the project venv, so it also reports the
 newest Python installed on this machine.
 """
@@ -14,6 +16,7 @@ import re
 import subprocess
 import sys
 import urllib.request
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -47,6 +50,21 @@ ISSUES_JQ = (
     " .title, .body] | @json"
 )
 BRANCH = re.compile(r"[A-Za-z0-9._/-]{1,100}")
+WORKFLOWS = ROOT / ".github" / "workflows"
+# The pin form tests/test_ci_workflows.py allows (same pattern): a whole line
+# `- uses: owner/repo[/path]@<sha> # vX.Y.Z`, so commented-out steps don't count. ASCII,
+# bounded and without overlapping parts, so odd lines can't slow it down.
+PIN = re.compile(
+    r"^[ \t]*(?:- )?uses: ([A-Za-z0-9-]{1,39}/[A-Za-z0-9_.-]{1,100})(?:/[A-Za-z0-9_./-]{0,200})?"
+    r"@[0-9a-f]{40} # (v[0-9]{1,6}(?:\.[0-9]{1,6}){0,3})[ \t]*$",
+    re.M | re.ASCII,
+)
+# Release tags come from other people's repositories: only plain versions are reported.
+RELEASE_TAG = re.compile(r"v?[0-9]{1,6}(?:\.[0-9]{1,6}){0,3}", re.ASCII)
+RELEASE_JQ = "[.tag_name, .published_at] | @json"
+RELEASE_COOLDOWN_DAYS = 7  # a hijacked action is usually caught within days (tj-actions, 2025)
+MAX_PINS = 16  # actions checked per session, 8 at a time
+PIN_WORKERS = 8
 
 
 class Item(NamedTuple):
@@ -87,8 +105,8 @@ def python_status() -> str:
     system = sys.version_info[:2]
     try:
         project = version_tuple((ROOT / ".python-version").read_text(encoding="utf-8"))[:2]
-    except OSError:
-        return "Python: .python-version is missing -> run /update-deps"
+    except OSError, UnicodeDecodeError:
+        return "Python: .python-version is missing or unreadable -> run /update-deps"
     system_txt = ".".join(map(str, system))
     project_txt = ".".join(map(str, project))
     if system > project:
@@ -108,7 +126,7 @@ def uv_status() -> str | None:
     out = run("uv", "--version")
     try:
         pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    except OSError:
+    except OSError, UnicodeDecodeError:
         return None
     match = re.search(r"uv_build>=[\d.]+,<([\d.]+)", pyproject)
     if out and match and version_tuple(out) >= version_tuple(match.group(1)):
@@ -144,6 +162,72 @@ def dependency_status() -> str:
     items = ", ".join(f"{name} {current} -> {latest}" for name, current, latest in outdated)
     return (
         f"Dependencies: {len(outdated)} outdated ({items}) "
+        "-> ACTION (rule 6): run /update-deps before any other work"
+    )
+
+
+def release(text: str) -> tuple[int, ...]:
+    """A version of up to four parts, padded, so `v7` equals `v7.0.0` and `v1.2.3.1` is
+    newer than `v1.2.3`. Callers pass only PIN or RELEASE_TAG matches (at most 6 digits)."""
+    return (*(int(part) for part in re.findall(r"[0-9]+", text)[:4]), 0, 0, 0, 0)[:4]
+
+
+def action_pins() -> dict[str, str]:
+    """The oldest pinned version of each action (`owner/repo`) in the workflows."""
+    pins: dict[str, str] = {}
+    for path in sorted(WORKFLOWS.glob("*.y*ml")):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError, UnicodeDecodeError:  # CI reads workflows as UTF-8 and fails on others
+            continue
+        for repo, version in PIN.findall(text):
+            if repo.split("/")[1] in {".", ".."}:
+                continue
+            if repo not in pins or release(version) < release(pins[repo]):
+                pins[repo] = version
+    return pins
+
+
+def latest_release(repo: str) -> tuple[str, datetime] | None:
+    """The tag and publish time of an action's latest release, or None if gh failed or the
+    tag is not a plain version (text from someone else's repository)."""
+    out = run("gh", "api", f"repos/{repo}/releases/latest", "--jq", RELEASE_JQ, timeout=8)
+    try:
+        tag, published = json.loads(out)
+        when = datetime.fromisoformat(published)
+    except TypeError, ValueError:
+        return None
+    if not isinstance(tag, str) or not RELEASE_TAG.fullmatch(tag) or when.tzinfo is None:
+        return None
+    return tag, when
+
+
+def action_pins_status(now: datetime | None = None) -> str | None:
+    """Pinned actions behind their latest release (rule 6), or None (no line) when gh
+    cannot tell for any of them, so the report stays quiet offline.
+
+    A release counts only once it is RELEASE_COOLDOWN_DAYS old: hijacked releases are
+    usually found and pulled within days."""
+    pins = action_pins()
+    if not pins:
+        return None
+    checked = list(pins)[:MAX_PINS]
+    with ThreadPoolExecutor(max_workers=min(len(checked), PIN_WORKERS)) as pool:
+        latest = dict(zip(checked, pool.map(latest_release, checked), strict=True))
+    if not any(latest.values()):
+        return None
+    cutoff = (now or datetime.now(UTC)) - timedelta(days=RELEASE_COOLDOWN_DAYS)
+    outdated = [
+        f"{repo} {pins[repo]} -> {found[0]}"
+        for repo, found in latest.items()
+        if found and found[1] <= cutoff and release(found[0]) > release(pins[repo])
+    ]
+    unknown = [repo for repo, found in latest.items() if not found] + list(pins)[MAX_PINS:]
+    note = f" (could not check {', '.join(unknown)})" if unknown else ""
+    if not outdated:
+        return f"Action pins: all {len(pins) - len(unknown)} up to date{note}"
+    return (
+        f"Action pins: {len(outdated)} outdated ({', '.join(outdated)}){note} "
         "-> ACTION (rule 6): run /update-deps before any other work"
     )
 
@@ -222,7 +306,7 @@ def open_items() -> list[Item] | None:
 def tasks_text() -> str | None:
     try:
         return (ROOT / "TASKS.md").read_text(encoding="utf-8")
-    except OSError:
+    except OSError, UnicodeDecodeError:
         return None
 
 
@@ -332,16 +416,32 @@ def next_tasks(limit: int = 5) -> str:
     return "Next up (TASKS.md):\n" + "\n".join(f"  {item}" for item in items[:limit])
 
 
+def safe(check: Callable[[], str | None], label: str) -> str | None:
+    """Run one check; a bug in it costs its own line, not the whole report."""
+    try:
+        return check()
+    except Exception as exc:
+        return f"{label}: could not check ({type(exc).__name__} in session_start.py, fix it)"
+
+
 def main() -> None:
-    with ThreadPoolExecutor(max_workers=2) as pool:
+    with ThreadPoolExecutor(max_workers=3) as pool:
         # Network checks run side by side so the hook stays within its 60 s timeout.
-        security = pool.submit(github_security_status)
-        claims = pool.submit(claims_status)
-        lines = ["Nvagik session check (.claude/hooks/session_start.py):", python_status()]
-        if uv := uv_status():
-            lines.append(uv)
-        lines += [dependency_status(), security.result(), claims.result()]
-        lines += [git_status(), next_tasks()]
+        security = pool.submit(safe, github_security_status, "GitHub security")
+        claims = pool.submit(safe, claims_status, "GitHub claims")
+        pins = pool.submit(safe, action_pins_status, "Action pins")
+        checks = [
+            (python_status, "Python"),
+            (uv_status, "uv"),
+            (dependency_status, "Dependencies"),
+            (pins.result, "Action pins"),
+            (security.result, "GitHub security"),
+            (claims.result, "GitHub claims"),
+            (git_status, "Git"),
+            (next_tasks, "TASKS.md"),
+        ]
+        lines = ["Nvagik session check (.claude/hooks/session_start.py):"]
+        lines += [line for check, label in checks if (line := safe(check, label))]
     context = "\n".join(lines)
     print(
         json.dumps(

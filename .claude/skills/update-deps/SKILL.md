@@ -38,7 +38,7 @@ Then:
 
 ### GitHub Actions
 
-Workflows pin every action to a full commit SHA with the version in a comment (`uses: owner/repo@<sha> # vX.Y.Z`), so nothing updates them automatically. Compare each pin with the latest release:
+Workflows pin every action to a full commit SHA with the version in a comment (`uses: owner/repo@<sha> # vX.Y.Z`), so nothing updates them automatically. The SessionStart hook compares them with each action's latest release and reports the outdated ones ("Action pins: ...", NVG-11); to check by hand, compare each pin with the latest release:
 
 ```sh
 grep -ho "uses: [^ ]* # v[0-9.]*" .github/workflows/*.y*ml | sort -u
@@ -48,7 +48,7 @@ gh api repos/<owner>/<repo>/git/ref/tags/<tag> --jq '.object.type + " " + .objec
 
 If the ref's type is `tag` (an annotated tag), resolve it to the commit with `gh api repos/<owner>/<repo>/git/tags/<sha> --jq .object.sha`.
 
-Before accepting a new SHA (a moved tag can point to a malicious commit, as in the 2025 tj-actions incident):
+Before accepting a new SHA (a moved tag can point to a malicious commit, as in the 2025 tj-actions incident), wait until the release is at least 7 days old (`gh api repos/<owner>/<repo>/releases/tags/<tag> --jq .published_at`; the hook already waits that long before reporting it), then:
 
 1. The commit must be in the action's own history: `gh api repos/<owner>/<repo>/compare/<default-branch>...<new-sha> --jq .ahead_by` prints `0`. An immutable release (`gh api repos/<owner>/<repo>/releases/tags/<tag> --jq .immutable` is `true`) is safe as well.
 2. Skim what changed: `gh api repos/<owner>/<repo>/compare/<old-sha>...<new-sha> --jq '.files[].filename'` and the release notes (changed inputs, new network access).

@@ -20,14 +20,9 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 4. NVG-400: Spike: MIDI libraries on Python 3.15
 5. NVG-610: Spike: VST3 hosting
 6. NVG-20: Decide the minimum Windows version
-7. NVG-11: Report outdated GitHub Actions pins at session start
+7. NVG-21: Decide the project file format
 
 ## Project setup and repository
-
-### NVG-11: Report outdated GitHub Actions pins at session start
-**Type:** Task · **Priority:** P3 · **Size:** S · **Status:** To Do · **Depends on:** —
-- [ ] `session_start.py` reads the `uses: owner/repo@<sha> # vX.Y.Z` pins in `.github/workflows/`, compares them with each action's latest release via `gh` (in parallel with the other checks, short timeout, quiet when offline) and reports the outdated ones, so `/update-deps` handles them (rule 6).
-- [ ] Tested in `tests/test_session_start.py` with `gh` faked.
 
 ### NVG-12: Enforce action pinning in the repository settings
 **Type:** Chore · **Priority:** P2 · **Size:** XS · **Status:** Blocked (owner) · **Depends on:** —

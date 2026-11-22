@@ -33,7 +33,12 @@ ALLOWED_EXPRESSIONS = {
     "${{ github.ref }}",
     "${{ github.event_name == 'push' }}",
 }
-PIN = re.compile(r"^\s*(?:- )?uses: [\w.-]+/[\w./-]+@[0-9a-f]{40} # v\d+(?:\.\d+)*$")
+# Same form as PIN in .claude/hooks/session_start.py, which reports outdated pins (NVG-11).
+PIN = re.compile(
+    r"^[ \t]*(?:- )?uses: [A-Za-z0-9-]{1,39}/[A-Za-z0-9_.-]{1,100}(?:/[A-Za-z0-9_./-]{0,200})?"
+    r"@[0-9a-f]{40} # v[0-9]{1,6}(?:\.[0-9]{1,6}){0,3}$",
+    re.ASCII,
+)
 
 
 def top_level_block(text: str, key: str) -> list[str]:

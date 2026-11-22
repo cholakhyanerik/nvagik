@@ -4,6 +4,17 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-11-22
+
+### Added
+
+- The SessionStart hook reports pinned GitHub Actions that are behind their latest release (NVG-11): `Action pins: 1 outdated (actions/checkout v7.0.1 -> v7.1.0) -> ACTION (rule 6): run /update-deps before any other work`. It reads the `- uses: owner/repo@<sha> # vX.Y.Z` lines in `.github/workflows/` (whole lines only, so commented-out steps don't count; the oldest pin of an action counts), asks `gh` for each action's latest release in parallel with the other checks (8 s timeout, at most 16 actions, 8 at a time), and compares versions as numbers with up to four parts. A release counts only once it is 7 days old, because hijacked releases (tj-actions, 2025) are usually found and pulled within days. Release tags come from other people's repositories, so only plain version numbers are reported; anything else, and a `gh` failure for one action, shows as "could not check". When `gh` cannot tell for any action, there is no line.
+- `tests/test_ci_workflows.py` accepts only the pin form the hook reads (ASCII names of GitHub's length, versions of up to four parts with up to six digits each), and a test checks that the hook sees every pin.
+
+### Fixed
+
+- One SessionStart check failing (for example a workflow, `TASKS.md` or `pyproject.toml` that is not valid UTF-8) used to crash the whole hook, so the session started without any report, including the security lines. Each check now costs only its own line ("could not check"), and files that are not UTF-8 are treated like missing ones.
+
 ## [0.1.13] - 2026-11-22
 
 ### Added
@@ -175,7 +186,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.13...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.14...HEAD
+[0.1.14]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.10...v0.1.11
