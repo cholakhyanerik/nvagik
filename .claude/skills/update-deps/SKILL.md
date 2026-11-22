@@ -53,7 +53,7 @@ Before accepting a new SHA (a moved tag can point to a malicious commit, as in t
 1. The commit must be in the action's own history: `gh api repos/<owner>/<repo>/compare/<default-branch>...<new-sha> --jq .ahead_by` prints `0`. An immutable release (`gh api repos/<owner>/<repo>/releases/tags/<tag> --jq .immutable` is `true`) is safe as well.
 2. Skim what changed: `gh api repos/<owner>/<repo>/compare/<old-sha>...<new-sha> --jq '.files[].filename'` and the release notes (changed inputs, new network access).
 
-Then update the SHA and the version comment, and let the next push run CI once to confirm. Once NVG-12 restricts the repository's allowed actions, a new action must also be added there.
+Then update the SHA and the version comment, and let the next push run CI once to confirm. The repository allows only GitHub-owned actions and `astral-sh/setup-uv` (NVG-12). A new third-party action must be added to `ALLOWED_ACTIONS` in `tests/test_ci_workflows.py` and to the repository settings; the permission check refuses that settings change, so prepare the command (`gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions/selected-actions -F github_owned_allowed=true -F verified_allowed=false -f 'patterns_allowed[]=astral-sh/setup-uv@*' -f 'patterns_allowed[]=<owner>/<repo>@*'`) as a `Blocked (owner)` card.
 
 ## 3. Verify
 

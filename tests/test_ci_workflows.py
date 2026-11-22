@@ -26,6 +26,9 @@ EXPECTED_ON = [
 # GitHub-hosted runners only: a self-hosted runner would run code from fork
 # pull requests on that machine.
 ALLOWED_RUNNERS = {"windows-latest"}
+# Mirrors the repository's Actions settings (NVG-12): GitHub-owned actions plus these.
+ALLOWED_ACTION_OWNERS = {"actions", "github"}
+ALLOWED_ACTIONS = {"astral-sh/setup-uv"}
 # Expressions are never built from event data (titles, branch names, commit
 # messages), which would allow script injection.
 ALLOWED_EXPRESSIONS = {
@@ -115,6 +118,15 @@ def test_actions_are_pinned_to_commit_shas(workflow):
     assert uses
     for line in uses:
         assert PIN.match(line), f"not pinned as 'uses: owner/repo@<sha> # vX.Y.Z': {line}"
+
+
+def test_only_allowed_actions_are_used(workflow):
+    # The repository settings allow only these (NVG-12); this catches it before CI does.
+    code = without_comment_lines(workflow)
+    for owner, repo in re.findall(r"uses: ([^/\s]+)/([^/@\s]+)", code):
+        assert owner in ALLOWED_ACTION_OWNERS or f"{owner}/{repo}" in ALLOWED_ACTIONS, (
+            f"{owner}/{repo} is not allowed in the repository's Actions settings (NVG-12)"
+        )
 
 
 def test_expressions_are_allowlisted(workflow):

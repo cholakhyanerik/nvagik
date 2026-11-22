@@ -4,6 +4,16 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-11-22
+
+### Security
+
+- Repository Actions settings (NVG-12), applied by the owner: every action must be pinned to a full commit SHA, and only GitHub-owned actions plus `astral-sh/setup-uv` may run. A CI run under the new settings passed. `tests/test_ci_workflows.py` mirrors the allow list, so a workflow with any other action fails locally first; CLAUDE.md lists the check commands, and `/update-deps` says how a new action gets allowed.
+
+### Changed
+
+- TASKS.md: the remaining step, requiring CI approval for all external contributors, is its own card, NVG-17 (`Blocked (owner)`: the permission check refused the change).
+
 ## [0.1.14] - 2026-11-22
 
 ### Added
@@ -186,7 +196,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.14...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.15...HEAD
+[0.1.15]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.11...v0.1.12

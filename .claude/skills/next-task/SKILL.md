@@ -16,7 +16,7 @@ Read the SessionStart hook report in your context. If it is missing, run `py -3 
 - Python or dependency drift, outdated action pins ("Action pins: ... outdated"), or open Dependabot alerts, reported: run `/update-deps` (or the `deps-updater` agent) first and finish it with `/finish-task`.
 - PyPI unreachable: note it, continue, and recheck later in the session.
 - Commits behind origin: `git pull --rebase` first.
-- `Blocked (owner)` cards with a check command (for example NVG-12): run the check. If the owner has done their step, finish the card now with `/finish-task`.
+- `Blocked (owner)` cards with a check command (for example NVG-17): run the check. If the owner has done their step, finish the card now with `/finish-task`.
 - Pull requests the owner merged since the last session (lines under `## [Unreleased]` after `git pull --rebase`): run `/finish-task` for them (delete their cards, release the lines, bump, tag, push).
 - Open pull requests listed under "GitHub claims" (NVG-14): review up to 2 of them, oldest first, before task work, see below.
 
