@@ -1,6 +1,6 @@
 [project]
 name = "nvagik"
-version = "0.1.11"
+version = "0.1.12"
 description = "Free, open-source digital audio workstation (DAW) for Windows with an Armenian, Russian and English interface."
 readme = "README.md"
 license = "GPL-3.0-or-later"
@@ -10,7 +10,7 @@ authors = [
 ]
 requires-python = ">=3.15"
 dependencies = [
-    "pyside6>=6.12.0",
+    "pyside6-essentials>=6.12.0",
 ]
 
 [project.scripts]

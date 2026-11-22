@@ -4,6 +4,18 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-11-22
+
+### Added
+
+- `tests/test_dependencies.py` allows only `pyside6-essentials` among the PySide packages in `uv.lock` and checks that Qt's Russian strings (`qtbase_ru`) still load.
+
+### Changed
+
+- Qt now comes from `pyside6-essentials` instead of the full `pyside6` (NVG-13), which also pulled `pyside6-addons`, `pyside6-webengine` and `pyside6-pdf` that the app does not use. Qt wheels to download for Windows: 259.2 MB → 83.4 MB (175.8 MB less in every CI run); `.venv` on disk: about 700 MB → about 260 MB. The modules the app plans to use and the `pyside6-lupdate`, `pyside6-lrelease` and `pyside6-deploy` tools are in Essentials. One catch: Qt's `qt_ru.qm` also needs a file from the Addons, so NVG-112 loads `qtbase_<lang>` instead (written into the card, the i18n skill and CLAUDE.md).
+- `/update-deps` raises the `pyside6-essentials` bound instead of `pyside6`; CONTRIBUTING.md tells contributors that the Addons modules are not installed.
+- TASKS.md: NVG-117 (Armenian translation of Qt's own strings, because Qt ships none).
+
 ## [0.1.11] - 2026-11-21
 
 ### Changed
@@ -135,7 +147,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.11...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.12...HEAD
+[0.1.12]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.8...v0.1.9

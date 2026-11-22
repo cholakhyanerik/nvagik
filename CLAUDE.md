@@ -59,6 +59,7 @@ If PyPI is unreachable, add `--offline` to uv commands (the uv cache has the dev
 - Layout: application code in `src/nvagik/`, tests in `tests/`, helper scripts in `scripts/`, docs in `docs/`.
 - **Windows only.** No code paths or conditional branches for other operating systems.
 - **Audio callback rule.** Inside the audio callback: no file I/O, no memory allocation, no locks, no logging, no Qt calls. Buffers are preallocated; heavy math runs in NumPy or other compiled code. The engine talks to the UI only through lock-free queues and counters that the UI polls with a `QTimer`.
+- **Qt is `pyside6-essentials`**, not the full `pyside6` (NVG-13). A feature that needs an Addons module (Charts, Multimedia, WebSockets, ...) adds `pyside6-addons` with a docs/DECISIONS.md entry and to `ALLOWED_QT` in `tests/test_dependencies.py`. Qt's own translations are loaded as `qtbase_<lang>`, never `qt_<lang>` (that one needs an Addons file and fails silently).
 - **Lazy imports.** Heavy modules (NumPy, sounddevice, soundfile, MIDI, plugins) are imported when first needed, never at startup.
 - **No hard-coded UI text.** Use `self.tr()` / `QCoreApplication.translate()`; placeholders via `.format()` with names; plurals via `tr(text, "", n)`.
 - **Design tokens only.** Colors, fonts and spacing come from the theme module, never inline.

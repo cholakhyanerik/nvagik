@@ -42,7 +42,7 @@ The full list is in [CLAUDE.md](CLAUDE.md); these matter most.
 - **Don't break what works.** The full test suite passes before every commit. Every bug fix comes with a regression test. Never weaken or delete a test to make it pass. Old project files must keep loading: every format change bumps the schema version and adds a migration with a test file.
 - **Security.** Project files, audio, MIDI and plugin data are untrusted: validate sizes and types, keep paths inside the project folder, and never use `pickle`, `eval` or `exec` on them. The app makes no network requests. Never commit secrets, keys or personal data.
 - **Design.** Colors, fonts and spacing come from the theme, never inline.
-- **Dependencies** must be well known, maintained, GPL-compatible and have Windows wheels for the current Python.
+- **Dependencies** must be well known, maintained, GPL-compatible and have Windows wheels for the current Python. Qt comes from `pyside6-essentials`, so modules from `pyside6-addons` (QtMultimedia, QtCharts, QtWebSockets and others) are not installed: open an issue before using one.
 - **English** for code, comments, docs and commit messages.
 
 ## Commits and pull requests

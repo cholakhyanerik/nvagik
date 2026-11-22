@@ -14,7 +14,7 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ## Next up
 
-1. NVG-13: Depend on pyside6-essentials instead of the full pyside6
+1. NVG-14: Respect cards that contributors have claimed
 2. NVG-100: App bootstrap module
 3. NVG-120: Design system v0
 4. NVG-130: Add sounddevice
@@ -33,11 +33,6 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 **Type:** Chore · **Priority:** P2 · **Size:** XS · **Status:** To Do · **Depends on:** —
 - [ ] Repository Actions settings require full-SHA pins and allow only GitHub-owned actions plus `astral-sh/setup-uv@*`: `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions -F enabled=true -f allowed_actions=selected -F sha_pinning_required=true`, then `gh api -X PUT repos/cholakhyanerik/nvagik/actions/permissions/selected-actions -F github_owned_allowed=true -F verified_allowed=false -f 'patterns_allowed[]=astral-sh/setup-uv@*'`. `tests/test_ci_workflows.py` only catches drift, because a pull request can edit the test. On 2026-11-21 Claude Code's permission check refused this settings change in an unattended session, so it needs the owner's approval of the command.
 - [ ] Checked with `gh api repos/cholakhyanerik/nvagik/actions/permissions`; the check is added to the CLAUDE.md security-features line and recorded in docs/DECISIONS.md; a CI run still passes.
-
-### NVG-13: Depend on pyside6-essentials instead of the full pyside6
-**Type:** Task · **Priority:** P1 · **Size:** XS · **Status:** To Do · **Depends on:** —
-- [ ] `pyproject.toml` depends on `pyside6-essentials` (QtCore, QtGui, QtWidgets, QtTest, QtSvg, QtOpenGL; not QtMultimedia, which audio does not need because it uses sounddevice) instead of `pyside6`, which also pulls `pyside6-webengine` (131.7 MB wheel), `pyside6-addons` (40.5 MB) and `pyside6-pdf` (3 MB) that the code does not use. About 175 MB less to download in every CI run and a smaller installer (rule 2). A later feature that needs an Addons module adds `pyside6-addons` then.
-- [ ] uv.lock no longer contains webengine, addons or pdf; `uv run pytest` passes and `uv run nvagik` starts; download and `.venv` sizes before and after recorded in the CHANGELOG; decision in docs/DECISIONS.md.
 
 ### NVG-14: Respect cards that contributors have claimed
 **Type:** Task · **Priority:** P2 · **Size:** S · **Status:** To Do · **Depends on:** —
@@ -125,8 +120,8 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 
 ### NVG-112: Load the interface language at startup
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** NVG-111, NVG-104
-- [ ] Language = saved setting, else the Windows UI language if it is hy/ru, else English; Qt's own strings translated too.
-- [ ] Test switches each of hy/ru/en and checks one translated string.
+- [ ] Language = saved setting, else the Windows UI language if it is hy/ru, else English; Qt's own strings translated too, loaded as `qtbase_<lang>` from `QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)`, never `qt_<lang>` (that meta file also needs `qtmultimedia_<lang>`, which is not in `pyside6-essentials`, so it fails to load silently; NVG-13).
+- [ ] Test switches each of hy/ru/en and checks one translated string, plus one Qt string in Russian (`QPlatformTheme` "Cancel" → "Отмена").
 
 ### NVG-113: Language menu with live switching
 **Type:** Story · **Priority:** P1 · **Size:** S · **Status:** To Do · **Depends on:** NVG-112
@@ -143,6 +138,11 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 ### NVG-116: DAW terminology glossary
 **Type:** Task · **Priority:** P1 · **Size:** S · **Status:** To Do · **Depends on:** —
 - [ ] `docs/GLOSSARY.md`: EN/RU/HY table of core terms (track, clip, mixer, send, bus, piano roll, quantize, latency, …) used by all translations.
+
+### NVG-117: Armenian translation of Qt's own strings
+**Type:** Task · **Priority:** P1 · **Size:** S · **Status:** To Do · **Depends on:** NVG-112, NVG-116
+- [ ] Qt ships no `qtbase_hy.qm`, so Qt's own texts the app shows (standard dialog buttons in context `QPlatformTheme`, the text-field context menu, `QFileDialog` and `QMessageBox` texts) stay English under Armenian. `src/nvagik/i18n/qtbase_hy.ts` translates the ones the app uses, is compiled by `scripts/i18n.py build` and loaded for `hy` in place of Qt's file.
+- [ ] Test: under `hy`, `QCoreApplication.translate("QPlatformTheme", "Cancel")` returns the Armenian text.
 
 ### NVG-120: Design system v0
 **Type:** Task · **Priority:** P0 · **Size:** S · **Status:** To Do · **Depends on:** —

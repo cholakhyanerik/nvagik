@@ -98,7 +98,7 @@ Versions follow [Semantic Versioning](https://semver.org/): before 1.0, every fi
 
 These rules are mandatory and do not change.
 
-- **Language and tools.** Python 3.15. GUI: PySide (Qt for Python). Package and environment management: uv (Astral). Day-to-day commands are `uv init`, `uv add`, `uv sync` and `uv run`. Everything is done with this stack only.
+- **Language and tools.** Python 3.15. GUI: PySide (Qt for Python), installed as `pyside6-essentials` without the Qt add-ons the app does not use. Package and environment management: uv (Astral). Day-to-day commands are `uv init`, `uv add`, `uv sync` and `uv run`. Everything is done with this stack only.
 - **Platform.** Windows only. We don't write code or conditional branches for other operating systems.
 - **Repository.** Open (public), licensed under GPL-3.0-or-later (see [License](#license)).
 - **Funding.** For now, donations only: [github.com/sponsors/cholakhyanerik](https://github.com/sponsors/cholakhyanerik). The donation link is shown in this README and in the app's **About** window. This is temporary: later it will be replaced by a paid model, with payments going to the developer's sole proprietorship.

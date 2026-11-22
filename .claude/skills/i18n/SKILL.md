@@ -38,4 +38,4 @@ These are created by NVG-110 to NVG-114; until then, follow the layout when addi
 
 ## Language selection at startup
 
-Saved setting, else the Windows UI language when it is Armenian or Russian, else English. Qt's own strings (standard dialogs) are translated too.
+Saved setting, else the Windows UI language when it is Armenian or Russian, else English. Qt's own strings (standard dialogs) are translated too: load `qtbase_<lang>` from `QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)`, never `qt_<lang>`. `qt_<lang>.qm` is a meta file that also needs `qtmultimedia_<lang>.qm` from `pyside6-addons`, which the project does not install (NVG-13), so it fails to load without an error. Qt has no Armenian file at all; our own `qtbase_hy.ts` fills that gap (NVG-117).

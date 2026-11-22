@@ -31,7 +31,7 @@ uv sync
 
 Then:
 
-1. Raise the lower bounds in `pyproject.toml` to the new versions so they are explicit (`uv add "pyside6>=X.Y"`, `uv add --dev "pytest>=X.Y"`).
+1. Raise the lower bounds in `pyproject.toml` to the new versions so they are explicit (`uv add "pyside6-essentials>=X.Y"`, `uv add --dev "pytest>=X.Y"`). Qt comes from `pyside6-essentials`, not the full `pyside6` (NVG-13, `tests/test_dependencies.py`).
 2. For every major or minor upgrade, read the release notes and adapt the code to breaking changes and deprecations.
 3. If `uv --version` is outside the `uv_build>=…,<…` range in `[build-system]`, update the range to the current uv minor version. CI installs the newest uv that its pinned `astral-sh/setup-uv` release knows (`version: latest-known`); after a local uv upgrade, bump that pin to a release that knows the new uv (see GitHub Actions below), or a `uv.lock` written by the newer uv can fail CI's locked sync.
 4. When online, run `uvx pip-audit` and fix reported vulnerabilities.
