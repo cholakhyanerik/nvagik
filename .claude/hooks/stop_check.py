@@ -55,7 +55,8 @@ def main() -> None:
         "Before stopping: "
         + "; ".join(parts)
         + ". If a task is finished, run the finish-task skill (verify, TASKS.md, "
-        "CHANGELOG.md, version, README.md, CLAUDE.md, commit, push, clean up). If the "
+        "CHANGELOG.md, version, README.md, CLAUDE.md, .claude/rules/, commit, push, "
+        "clean up). If the "
         "work is intentionally unfinished or the owner only asked a question, say so "
         "briefly and stop."
     )

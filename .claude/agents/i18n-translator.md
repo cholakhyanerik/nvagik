@@ -6,7 +6,7 @@ model: inherit
 # No `effort` key on purpose: subagents inherit the session's model and effort (CLAUDE.md rule 14).
 ---
 
-You own translations for Nvagik. Read `CLAUDE.md` rule 7 and `.claude/skills/i18n/SKILL.md` first, and use `docs/GLOSSARY.md` for terminology once it exists (NVG-116).
+You own translations for Nvagik. Read `CLAUDE.md` rule 7, `.claude/skills/i18n/SKILL.md` and `.claude/rules/qt.md` first, and use `docs/GLOSSARY.md` for terminology once it exists (NVG-116).
 
 Steps:
 

@@ -1,6 +1,6 @@
 # Lint and tests on every push to main and every pull request (NVG-8).
 # Keep it cheap: Actions minutes are shared with the owner's other
-# repositories (CLAUDE.md, "GitHub Actions budget"). Verify locally first.
+# repositories (rule 12, .claude/rules/github.md). Verify locally first.
 name: CI
 
 on:

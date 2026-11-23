@@ -1,13 +1,13 @@
 """SessionStart hook: Python, dependency and action pin drift, GitHub security and claims,
-git, next tasks.
+git, CLAUDE.md size, next tasks.
 
 Implements CLAUDE.md rules 4 (security: private vulnerability reports and
 Dependabot alerts, see SECURITY.md), 5 (Python follows the system), 6
-(dependencies and pinned GitHub Actions stay current) and 9 (TASKS.md drives the
-work, minus the cards contributors have claimed, see CONTRIBUTING.md). A check that
-fails costs its own line, never the whole report. Standard library only: it runs with
-the system interpreter (`py -3`), not the project venv, so it also reports the
-newest Python installed on this machine.
+(dependencies and pinned GitHub Actions stay current), 9 (TASKS.md drives the
+work, minus the cards contributors have claimed, see CONTRIBUTING.md) and 15
+(CLAUDE.md stays short). A check that fails costs its own line, never the whole
+report. Standard library only: it runs with the system interpreter (`py -3`), not the
+project venv, so it also reports the newest Python installed on this machine.
 """
 
 import json
@@ -65,6 +65,10 @@ RELEASE_JQ = "[.tag_name, .published_at] | @json"
 RELEASE_COOLDOWN_DAYS = 7  # a hijacked action is usually caught within days (tj-actions, 2025)
 MAX_PINS = 16  # actions checked per session, 8 at a time
 PIN_WORKERS = 8
+# CLAUDE.md size (rule 15). The limits mirror tests/test_claude_md.py.
+CLAUDE_MD_TARGET_LINES = 200
+CLAUDE_MD_MAX_LINES = 400
+CLAUDE_MD_MAX_CHARS = 30_000
 
 
 class Item(NamedTuple):
@@ -405,6 +409,38 @@ def git_status() -> str:
     return "Git: " + ", ".join(parts)
 
 
+def claude_md_status() -> str | None:
+    """CLAUDE.md size (rule 15): silent within the target; tests/test_claude_md.py has the limits.
+
+    A missing or unreadable CLAUDE.md is reported: without it the session has no rules.
+    """
+    path = ROOT / "CLAUDE.md"
+    missing = (
+        "CLAUDE.md: missing or not UTF-8 -> ACTION: restore it from git "
+        "(git checkout -- CLAUDE.md) before task work"
+    )
+    over = (
+        f"over the limit ({CLAUDE_MD_MAX_LINES} lines, {CLAUDE_MD_MAX_CHARS} characters; "
+        "tests fail) -> ACTION (rule 15): move details into .claude/rules/ right after the "
+        "security and dependency items"
+    )
+    try:
+        if path.stat().st_size > 4 * CLAUDE_MD_MAX_CHARS:  # don't read a huge file whole
+            return f"CLAUDE.md: {path.stat().st_size} bytes, {over}"
+        text = path.read_text(encoding="utf-8")
+    except OSError, UnicodeDecodeError:
+        return missing
+    lines = len(text.rstrip("\n").split("\n"))
+    if lines > CLAUDE_MD_MAX_LINES or len(text) > CLAUDE_MD_MAX_CHARS:
+        return f"CLAUDE.md: {lines} lines, {len(text)} characters, {over}"
+    if lines > CLAUDE_MD_TARGET_LINES:
+        return (
+            f"CLAUDE.md: {lines} lines, over the ~{CLAUDE_MD_TARGET_LINES}-line target "
+            "-> move details into .claude/rules/ (rule 15)"
+        )
+    return None
+
+
 def next_tasks(limit: int = 5) -> str:
     text = tasks_text()
     if text is None:
@@ -438,6 +474,7 @@ def main() -> None:
             (security.result, "GitHub security"),
             (claims.result, "GitHub claims"),
             (git_status, "Git"),
+            (claude_md_status, "CLAUDE.md"),
             (next_tasks, "TASKS.md"),
         ]
         lines = ["Nvagik session check (.claude/hooks/session_start.py):"]

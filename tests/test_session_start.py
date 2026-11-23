@@ -1,6 +1,6 @@
 """SessionStart hook, with `gh` faked: the GitHub security line (private reports and
 Dependabot alerts), the cards claimed in open issues and pull requests (NVG-14), outdated
-action pins (NVG-11), branch names and the report as a whole."""
+action pins (NVG-11), the CLAUDE.md size (NVG-18), branch names and the report as a whole."""
 
 import importlib.util
 import json
@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 HOOK = Path(__file__).resolve().parents[1] / ".claude" / "hooks" / "session_start.py"
+TEST_CLAUDE_MD = Path(__file__).resolve().with_name("test_claude_md.py")
 
 
 @pytest.fixture(scope="module")
@@ -269,6 +270,7 @@ def test_report_order(monkeypatch, hook, capsys):
         "github_security_status",
         "claims_status",
         "git_status",
+        "claude_md_status",
         "next_tasks",
     ]
     for name in names:
@@ -285,10 +287,54 @@ def test_quiet_checks_leave_no_line(monkeypatch, hook, capsys):
         monkeypatch.setattr(hook, name, lambda name=name: name)
     monkeypatch.setattr(hook, "uv_status", lambda: None)
     monkeypatch.setattr(hook, "action_pins_status", lambda: None)
+    monkeypatch.setattr(hook, "claude_md_status", lambda: None)
     hook.main()
     context = json.loads(capsys.readouterr().out)["hookSpecificOutput"]["additionalContext"]
     assert "None" not in context
     assert len(context.splitlines()) == 7
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("line\n" * 200, None),
+        ("line\n" * 201, "CLAUDE.md: 201 lines, over the ~200-line target"),
+        ("line\n" * 401, "CLAUDE.md: 401 lines, 2005 characters, over the limit"),
+        ("x" * 30_001, "CLAUDE.md: 1 lines, 30001 characters, over the limit"),
+        ("x" * 120_001, "CLAUDE.md: 120001 bytes, over the limit"),  # not read whole
+        ("", None),
+    ],
+)
+def test_claude_md_size(monkeypatch, hook, tmp_path, text, expected):
+    (tmp_path / "CLAUDE.md").write_bytes(text.encode("utf-8"))
+    monkeypatch.setattr(hook, "ROOT", tmp_path)
+    status = hook.claude_md_status()
+    if expected is None:
+        assert status is None
+    else:
+        assert status.startswith(expected)
+        assert "rule 15" in status
+        assert ("ACTION" in status) == ("over the limit" in expected)
+        assert "after the security and dependency items" in status or "ACTION" not in status
+
+
+@pytest.mark.parametrize("content", [None, b"\xff\xfe not utf-8", "folder"])
+def test_claude_md_missing_or_unreadable_is_an_action(monkeypatch, hook, tmp_path, content):
+    if content == "folder":
+        (tmp_path / "CLAUDE.md").mkdir()
+    elif content is not None:
+        (tmp_path / "CLAUDE.md").write_bytes(content)
+    monkeypatch.setattr(hook, "ROOT", tmp_path)
+    status = hook.claude_md_status()
+    assert status.startswith("CLAUDE.md: missing or not UTF-8 -> ACTION")
+
+
+def test_claude_md_limits_match_the_test(hook):
+    spec = importlib.util.spec_from_file_location("nvagik_test_claude_md", TEST_CLAUDE_MD)
+    limits = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(limits)
+    assert hook.CLAUDE_MD_MAX_LINES == limits.MAX_LINES
+    assert hook.CLAUDE_MD_MAX_CHARS == limits.MAX_CHARS
 
 
 def test_draft_pull_requests_are_not_reviewed_but_still_claim(monkeypatch, hook):

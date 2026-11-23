@@ -1,6 +1,6 @@
 ---
 name: finish-task
-description: Nvagik Definition of done. Run after finishing every task or bug fix: verify, review, update TASKS.md, CHANGELOG.md, version, README.md and CLAUDE.md, then commit, tag, push without asking, and clean up junk. Use whenever a TASKS.md task is complete.
+description: Nvagik Definition of done. Run after finishing every task or bug fix: verify, review, update TASKS.md, CHANGELOG.md, version, README.md, CLAUDE.md and .claude/rules/, then commit, tag, push without asking, and clean up junk. Use whenever a TASKS.md task is complete.
 ---
 
 # Finish a task
@@ -35,7 +35,7 @@ Fix every confirmed finding. Ideas that don't belong to this task become TASKS.m
 2. **Version:** `uv version --bump patch` for a task; `uv version --bump minor` for a phase exit task; `uv version 1.0.0` for the release.
 3. **CHANGELOG.md:** add `## [X.Y.Z] - YYYY-MM-DD` under `## [Unreleased]` with `Added` / `Changed` / `Fixed` / `Removed` / `Security` sections, mention task IDs, move any lines left under `## [Unreleased]` (from merged pull requests, see CONTRIBUTING.md) into the new version, and add the compare link at the bottom (`[X.Y.Z]: https://github.com/cholakhyanerik/nvagik/compare/vPREV...vX.Y.Z`).
 4. **README.md:** update the status line, features, commands or anything the task changed.
-5. **CLAUDE.md:** add conventions, commands and gotchas learned in this task; improve skills or agents if a step was unclear. Record decisions in `docs/DECISIONS.md`.
+5. **`.claude/rules/` and CLAUDE.md** (rule 15): conventions, commands and gotchas learned in this task go into the matching `.claude/rules/*.md` file (a new area gets a new file with `paths:` and a row in CLAUDE.md's "Where the details are"). CLAUDE.md changes only for an owner's rule, an architecture rule, a security rule (those always stay in CLAUDE.md) or a pointer, and stays at about 200 lines (`.claude/rules/docs.md`). Improve skills or agents if a step was unclear. Record decisions in `docs/DECISIONS.md`.
 
 Run `uv run pytest` again (it checks the CHANGELOG entry and the TASKS.md format).
 
@@ -56,6 +56,15 @@ git push origin main --follow-tags
 ```
 
 The guard hook scans the commit and the push. If it blocks, remove the leak; never bypass it.
+
+If the push changed more than Markdown and `docs/`, watch the CI run (it takes a few seconds to appear; `gh run watch` needs a run ID outside a terminal). Write the SHA and the ID into the commands literally:
+
+```sh
+gh run list --workflow ci.yml --commit <sha> --limit 1 --json databaseId --jq '.[0].databaseId'
+gh run watch <id> --exit-status --compact
+```
+
+A failed run is a bug: fix it now (rule 10).
 
 ## 5. Clean up
 

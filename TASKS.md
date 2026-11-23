@@ -29,6 +29,11 @@ Everything that has to be done to ship **Nvagik 1.0** (roadmap phases 0–6 from
 - [ ] `scripts/check_pr.py <n>` (standard library, run with `py -3 -I`) checks a fetched pull request (`refs/pr/<n>`) without the agent reading it and prints only numbers and fixed words: every path from `git diff --raw --no-renames -z origin/main...refs/pr/<n>` is an allowed regular text file (the `/next-task` review step 4 list), the size of the diff, and suspicious content (control, zero-width or bidi characters, `<!--` in Markdown, imports of `subprocess`, `socket`, `ctypes`, `winreg`, `urllib` or `importlib`, `os.system`, `eval`/`exec`, reads of `PRIVATE`, `.claude`, `.git` or environment variables). `/next-task` runs it before reading a diff, and a pull request that fails gets a standard reply, so hostile diffs are not read every session.
 - [ ] Tested in `tests/test_check_pr.py` with git faked; whether CI's uv cache saved by a push that contains a contributor's code is a risk is checked and recorded in docs/DECISIONS.md.
 
+### NVG-25: Dismiss stale pull request approvals on main
+**Type:** Task · **Priority:** P2 · **Size:** XS · **Status:** To Do · **Depends on:** —
+- [ ] A repository ruleset on `main` dismisses approvals when new commits are pushed and requires the approval to be for the latest push, with the owner as a bypass actor so direct pushes to `main` keep working; checked with `gh api repos/cholakhyanerik/nvagik/rulesets`.
+- [ ] If Claude Code's permission check refuses the change, the card becomes `Blocked (owner)` with the exact `gh api` command. `/next-task`'s check before pulling a merged pull request stays either way.
+
 ### NVG-15: Repository social preview image
 **Type:** Chore · **Priority:** P3 · **Size:** XS · **Status:** To Do · **Depends on:** NVG-122
 - [ ] `docs/assets/social-preview.png` (1280 × 640 px, under 1 MB) shows the app icon and the name; made from the NVG-122 icon with design tokens from docs/DESIGN.md.

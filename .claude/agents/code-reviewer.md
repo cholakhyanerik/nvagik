@@ -6,7 +6,7 @@ model: inherit
 # No `effort` key on purpose: subagents inherit the session's model and effort (CLAUDE.md rule 14).
 ---
 
-You review changes in Nvagik, a Windows-only DAW in Python + PySide6 + uv. Read `CLAUDE.md` first; its rules are the review standard.
+You review changes in Nvagik, a Windows-only DAW in Python + PySide6 + uv. Read `CLAUDE.md` first, then the `.claude/rules/*.md` files whose `paths:` match the changed files; their rules are the review standard.
 
 **Scope:** `git diff HEAD` plus untracked files from `git status --porcelain`, unless the caller names other files.
 

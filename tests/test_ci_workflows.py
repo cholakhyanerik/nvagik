@@ -1,4 +1,5 @@
-"""GitHub Actions workflows follow the budget and security rules in CLAUDE.md (NVG-8).
+"""GitHub Actions workflows follow the budget and security rules (rule 12,
+`.claude/rules/github.md`, NVG-8).
 
 The workflows are small and written by us, so a line-based reading is enough;
 no YAML parser is added to the dependencies for this. The checks fail closed:

@@ -4,6 +4,25 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.17] - 2026-11-23
+
+### Added
+
+- Owner's rule 15, "CLAUDE.md stays short" (NVG-18): about 200 lines, at most 400, because the file loads whole into every session. Details live in path-scoped `.claude/rules/*.md` files (`hooks`, `github`, `python`, `tests`, `qt`, `docs`, `repo-files`), which Claude Code loads only when a matching file is read.
+- `tests/test_claude_md.py`: CLAUDE.md has at most 400 lines and 30,000 characters and no `@` imports; the owner's rules are numbered 1, 2, 3, ...; every "rule N" cited in the repository exists; every rules file has `paths:` frontmatter whose patterns each match a file; CLAUDE.md lists every rules file, and no file names one that doesn't exist; the `#anchor` links in CLAUDE.md and README.md resolve; the Security section keeps its key rules.
+- The SessionStart hook reports CLAUDE.md when it is over the 200-line target, asks for action above the test's limits (without reading a huge file whole), and asks to restore it when it is missing or not UTF-8.
+
+### Changed
+
+- CLAUDE.md is about a quarter shorter (19,602 to 14,984 characters): the hook descriptions, the CI budget details, the GitHub settings checks, the test and Qt gotchas moved to the rules files, and dated notes were dropped. Security rules stay in CLAUDE.md, which every session loads.
+- `/finish-task` puts new conventions and gotchas into the matching rules file instead of CLAUDE.md, and now has the commands to watch the CI run.
+- `code-reviewer`, `security-auditor` and `i18n-translator` read the rules files that apply to their work. The CI workflow, its test and the Stop hook point to the new places.
+
+### Security
+
+- `/next-task` binds a contributor's merged pull request to the reviewed commit: the session report names the reviewed commit, the owner merges only while it is still the latest one, and before pulling, the agent checks that the merged head is the commit it approved and that only allowed paths changed. GitHub merges the current head, and `main` has no rule that dismisses an approval after a new push, so a commit pushed after the review would otherwise run on this machine at the next pull.
+- `/next-task` no longer accepts Python files under `tests/fixtures/` from contributors: pytest collects `conftest.py` and other `.py` files anywhere under `tests/`.
+
 ## [0.1.16] - 2026-11-22
 
 ### Security
@@ -202,7 +221,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.16...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.17...HEAD
+[0.1.17]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.13...v0.1.14
