@@ -4,6 +4,16 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [0.1.18] - 2026-11-23
+
+### Added
+
+- `tests/test_repo_files.py` fails on a README paragraph or list item longer than 300 characters (NVG-19; links count as their text; tables, headings and code blocks are exempt). Blockquotes, `1)` lists, `~~~` fences and badges are handled.
+
+### Changed
+
+- README is written in short lists (rule 15, NVG-19): long paragraphs became list items or nested items, with the same facts. The project documents table points to `.claude/rules/`.
+
 ## [0.1.17] - 2026-11-23
 
 ### Added
@@ -221,7 +231,8 @@ All notable changes to Nvagik are documented here. The format follows [Keep a Ch
 - Initial uv project for Python 3.15 with PySide6 (`uv run nvagik` prints a greeting).
 - README with the project description, principles, technical rules, roadmap, distribution and revenue model, risks, open questions and the name availability check.
 
-[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.17...HEAD
+[Unreleased]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.18...HEAD
+[0.1.18]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/cholakhyanerik/nvagik/compare/v0.1.14...v0.1.15

@@ -2,7 +2,12 @@
 
 [![CI](https://github.com/cholakhyanerik/nvagik/actions/workflows/ci.yml/badge.svg)](https://github.com/cholakhyanerik/nvagik/actions/workflows/ci.yml)
 
-**Nvagik** is a free, open-source digital audio workstation (DAW) for Windows. Write, record, edit and mix music in a fast, lightweight app with an Armenian, Russian and English interface. Built with Python 3.15, PySide and uv. Development is supported by donations via [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik).
+**Nvagik** is a free, open-source digital audio workstation (DAW) for Windows.
+
+- Write, record, edit and mix music in a fast, lightweight app.
+- The interface is in Armenian, Russian and English.
+- Built with Python 3.15, PySide and uv.
+- Development is supported by donations via [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik).
 
 > **Status:** early development, Phase 0 (skeleton). The app is not usable yet: `uv run nvagik` currently only prints a greeting. See the [Roadmap](#roadmap).
 
@@ -25,17 +30,18 @@
 
 ## About the name
 
-**Nvagik** (Armenian: Նվագիկ) comes from the Armenian word *nvag* (նվագ, "tune, played music") plus the diminutive suffix *-ik*, so it means "little tune". It follows the same naming pattern as the author's other apps, Ekranik and Kvartik.
-
-The name was chosen on 2026-11-21 after an availability check. Backup names are **Yergik** and **Dzaynik**. See [Name availability check](#name-availability-check) for details and limitations.
+- **Nvagik** (Armenian: Նվագիկ) is the Armenian word *nvag* (նվագ, "tune, played music") plus the diminutive suffix *-ik*: "little tune".
+- It follows the naming pattern of the author's other apps, Ekranik and Kvartik.
+- It was chosen on 2026-11-21 after an availability check. Backup names are **Yergik** and **Dzaynik** (see [Name availability check](#name-availability-check) for details and limitations).
 
 ## What Nvagik is
 
-Nvagik is an open-source digital audio workstation (DAW) for Windows for writing, recording, editing and mixing music. It is written in Python 3.15 with PySide and uv (by Astral).
-
-The long-term goal is to provide all the core functionality of apps like **Logic Pro**, **FL Studio** and **Ableton Live**, without the price barrier.
-
-For now the app is free, and the only source of income is donations via [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik). It will be distributed through the **Microsoft Store**, and a landing page will follow later. Donations are a temporary model: later Nvagik will become a paid app (see [Distribution and revenue model](#distribution-and-revenue-model)).
+- An open-source DAW for Windows for writing, recording, editing and mixing music.
+- Written in Python 3.15 with PySide and uv (by Astral).
+- The long-term goal: all the core functionality of apps like **Logic Pro**, **FL Studio** and **Ableton Live**, without the price barrier.
+- Free for now. The only source of income is donations via [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik).
+- It will be distributed through the **Microsoft Store**; a landing page will follow later.
+- Donations are temporary: later Nvagik becomes a paid app (see [Distribution and revenue model](#distribution-and-revenue-model)).
 
 ## Who it is for
 
@@ -78,7 +84,8 @@ Day-to-day commands:
 | Add a dependency | `uv add <package>` (dev tools: `uv add --dev <package>`) |
 | Remove build and test junk | `py -3 scripts/clean.py` |
 
-Use uv for everything; don't use `pip` directly. Want to help? Start with [CONTRIBUTING.md](CONTRIBUTING.md).
+- Use uv for everything; don't use `pip` directly.
+- Want to help? Start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Project documents
 
@@ -90,20 +97,31 @@ Use uv for everything; don't use `pip` directly. Want to help? Start with [CONTR
 | [TASKS.md](TASKS.md) | Backlog of small, Jira-style tasks for everything needed to ship 1.0 |
 | [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Decisions made during development, with reasons |
-| [CLAUDE.md](CLAUDE.md) | Development rules for AI-assisted work (Claude Code): workflow, architecture, security, performance budgets |
+| [CLAUDE.md](CLAUDE.md) | Development rules for AI-assisted work (Claude Code): workflow, architecture, security, performance budgets. Details by area are in [.claude/rules/](.claude/rules/) |
 
-Versions follow [Semantic Versioning](https://semver.org/): before 1.0, every finished task bumps the patch version and every finished roadmap phase bumps the minor version.
+Versions follow [Semantic Versioning](https://semver.org/). Before 1.0:
+
+- every finished task bumps the patch version;
+- every finished roadmap phase bumps the minor version.
 
 ## Technical rules
 
 These rules are mandatory and do not change.
 
-- **Language and tools.** Python 3.15. GUI: PySide (Qt for Python), installed as `pyside6-essentials` without the Qt add-ons the app does not use. Package and environment management: uv (Astral). Day-to-day commands are `uv init`, `uv add`, `uv sync` and `uv run`. Everything is done with this stack only.
+- **Language and tools.** Python 3.15, PySide (Qt for Python) for the GUI, and uv (Astral) for packages and environments. Everything is done with this stack only.
+  - Qt is installed as `pyside6-essentials`, without the Qt add-ons the app does not use.
+  - Day-to-day uv commands: `uv init`, `uv add`, `uv sync` and `uv run`.
 - **Platform.** Windows only. We don't write code or conditional branches for other operating systems.
 - **Repository.** Open (public), licensed under GPL-3.0-or-later (see [License](#license)).
-- **Funding.** For now, donations only: [github.com/sponsors/cholakhyanerik](https://github.com/sponsors/cholakhyanerik). The donation link is shown in this README and in the app's **About** window. This is temporary: later it will be replaced by a paid model, with payments going to the developer's sole proprietorship.
-- **Interface languages.** Armenian, Russian, English. No user-facing text is hard-coded. All strings go through translation files (Qt's translation system), so adding a new language never requires a code change.
-- **Speed.** This is the most important rule. Every new feature is measured: how fast the app starts, how much memory it uses, and how long the audio callback takes. A feature that slows the app down gets optimized or is not accepted.
+- **Funding.** For now, donations only: [github.com/sponsors/cholakhyanerik](https://github.com/sponsors/cholakhyanerik).
+  - The donation link is shown in this README and in the app's **About** window.
+  - This is temporary: later a paid model replaces it, with payments going to the developer's sole proprietorship.
+- **Interface languages.** Armenian, Russian, English.
+  - No user-facing text is hard-coded.
+  - All strings go through translation files (Qt's translation system), so adding a new language never requires a code change.
+- **Speed.** This is the most important rule.
+  - Every new feature is measured: how fast the app starts, how much memory it uses, and how long the audio callback takes.
+  - A feature that slows the app down gets optimized or is not accepted.
 - **Audio callback rule.** Inside the audio callback, never read files, allocate new memory or touch the UI. Buffers are pre-allocated, and heavy computation runs inside NumPy and other compiled libraries.
 - **Libraries (candidates).** The final choice will be made after the Phase 1 measurements.
 
@@ -119,7 +137,10 @@ These rules are mandatory and do not change.
 
 ## Roadmap
 
-The goal is full coverage of the core functionality of Logic Pro, FL Studio and Ableton Live. That is a very large scope, so the work is split into phases. **At the end of every phase the app must be usable, not half-finished.** The exit criteria are proposals and will be refined along the way.
+- The goal is full coverage of the core functionality of Logic Pro, FL Studio and Ableton Live.
+- That is a very large scope, so the work is split into phases.
+- **At the end of every phase the app must be usable, not half-finished.**
+- The exit criteria are proposals and will be refined along the way.
 
 | Phase | Scope | Exit criterion |
 | --- | --- | --- |
@@ -139,46 +160,56 @@ The goal is full coverage of the core functionality of Logic Pro, FL Studio and 
 ### Distribution
 
 - **Microsoft Store** is the main distribution channel.
-- **Landing page** (later). It will have the app's description, screenshots, and links to the Store and to donation or purchase. It will be hosted on Cloudflare (Workers static assets), with the domain bought through Cloudflare Registrar. The domains `nvagik.com` and `nvagik.app` were unregistered on 2026-11-21 (see [Name availability check](#name-availability-check)).
+- **Landing page** (later): the app's description, screenshots, and links to the Store and to donation or purchase.
+  - Hosted on Cloudflare (Workers static assets), with the domain bought through Cloudflare Registrar.
+  - The domains `nvagik.com` and `nvagik.app` were unregistered on 2026-11-21 (see [Name availability check](#name-availability-check)).
 - **GitHub** hosts the open repository (the code).
 
 ### Revenue model
 
-The revenue model has two stages:
-
 1. **Stage A (now).** The app is free. The only source of income is donations via [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik).
-2. **Stage B (later).** Donations are replaced, the app becomes paid, and payments go to the developer's sole proprietorship. The price, the format (one-time purchase or subscription) and the timing of the switch are not decided yet (see [Open questions](#open-questions)).
+2. **Stage B (later).** Donations are replaced: the app becomes paid, and payments go to the developer's sole proprietorship.
+   - The price, the format (one-time purchase or subscription) and the timing of the switch are not decided yet (see [Open questions](#open-questions)).
 
 ### Selling a paid app in the Microsoft Store: what to check
 
-- **Partner Center account type.** Choose Individual or Company for the sole proprietorship. Switching an Individual account to a Company account is not supported, so the type must be chosen up front.
-- **Payouts to Armenia.** It hasn't been checked whether Partner Center can pay paid-app revenue into an Armenian bank account, or in which currency. Confirm this in Partner Center or with Microsoft support.
-- **Store fee.** According to Microsoft's documentation, the Store fee is 15% for apps (12% for games). The supported monetization models are in-app purchases, subscriptions and ads. Account for this when setting the price.
+- **Partner Center account type.** Individual or Company for the sole proprietorship. An Individual account can't be switched to a Company account later, so the type must be chosen up front.
+- **Payouts to Armenia.** Not checked yet: can Partner Center pay paid-app revenue into an Armenian bank account, and in which currency? Confirm this in Partner Center or with Microsoft support.
+- **Store fee.** Per Microsoft's documentation: 15% for apps, 12% for games. Supported monetization: in-app purchases, subscriptions and ads. Account for the fee when setting the price.
 - **Taxes.** Confirm with the State Revenue Committee (SRC) or an accountant how income from paid sales is handled under the sole proprietorship's tax regime.
 
 ## Risks
 
-- **Real-time audio in Python.** The GIL and the garbage collector can stall the audio callback, which causes audible dropouts (underruns). The language and stack are fixed, so the question is not "can it be done?" but "how do we do it within this stack?". Candidate approaches:
-  - pre-allocated NumPy buffers;
-  - running the audio engine in a separate thread or a separate process, independent of the UI;
-  - doing heavy DSP inside compiled libraries.
-
-  Feasibility is measured in Phase 1. Only the architecture may change, never the language or the stack.
-- **The scope is huge.** "All the functionality" means the size of apps that large teams have built over decades. The realistic path is to bring each phase to a working app, rather than starting every direction at once.
-- **Funding.** Donations alone may not cover the time spent, and there is no other income for now. Donations are temporary and the app will become paid, so the price, the format and the timing of the switch still have to be decided (see [Open questions](#open-questions)).
+- **Real-time audio in Python.** The GIL and the garbage collector can stall the audio callback, which causes audible dropouts (underruns).
+  - The language and stack are fixed, so the question is not "can it be done?" but "how do we do it within this stack?".
+  - Candidate approaches:
+    - pre-allocated NumPy buffers;
+    - running the audio engine in a separate thread or a separate process, independent of the UI;
+    - doing heavy DSP inside compiled libraries.
+  - Feasibility is measured in Phase 1. Only the architecture may change, never the language or the stack.
+- **The scope is huge.** "All the functionality" means the size of apps that large teams have built over decades.
+  - The realistic path is to bring each phase to a working app, rather than starting every direction at once.
+- **Funding.** Donations alone may not cover the time spent, and there is no other income for now.
+  - Donations are temporary and the app will become paid, so the price, the format and the timing of the switch still have to be decided (see [Open questions](#open-questions)).
 - **Name and trademark.** The [name check](#name-availability-check) is only an indicator. It is not a legal trademark search.
 
 ## Open questions
 
 These decisions are for the project owner.
 
-1. **License.** *Decided on 2026-11-21:* **GPL-3.0-or-later**. It keeps `pedalboard` (GPL-3.0) available for VST3 hosting and still allows paid Store builds of the open code. See [License](#license) and the [comparison](docs/DECISIONS.md#license-nvg-1).
+1. **License.** *Decided on 2026-11-21:* **GPL-3.0-or-later**.
+   - It keeps `pedalboard` (GPL-3.0) available for VST3 hosting and still allows paid Store builds of the open code.
+   - See [License](#license) and the [comparison](docs/DECISIONS.md#license-nvg-1).
 2. **Microsoft Store edition.** Should the Store offer the same free version, or a separate version for a small fee?
-3. **Audio drivers.** WASAPI support is required. ASIO support still needs to be checked, since it depends on the PortAudio build and on ASIO licensing. Do we need ASIO for the lowest latency as early as the first phase?
+3. **Audio drivers.** WASAPI support is required.
+   - ASIO support still needs to be checked: it depends on the PortAudio build and on ASIO licensing.
+   - Do we need ASIO for the lowest latency as early as the first phase?
 4. **Minimum Windows version.** Windows 10, or Windows 11 only?
 5. **Project file format.** An open, readable format (for example JSON), or a closed binary format?
 6. **Paid model.** One-time purchase or subscription? What price (paid DAWs cost roughly $60–$199 in our research)? Will there be a free trial? When does the switch happen?
-7. **Open source in the paid stage.** An open repository is a baseline requirement. In the paid stage, does the code stay open while the ready-made Store build is paid? The GPL-3.0-or-later license (question 1) allows this model: Krita sells its GPL build in the Microsoft Store. The Store terms still have to be checked against it (NVG-23).
+7. **Open source in the paid stage.** An open repository is a baseline requirement. In the paid stage, does the code stay open while the ready-made Store build is paid?
+   - The GPL-3.0-or-later license (question 1) allows this model: Krita sells its GPL build in the Microsoft Store.
+   - The Store terms still have to be checked against it (NVG-23).
 8. **Partner Center account.** Individual or Company for the sole proprietorship? Can paid-app revenue be received in an Armenian bank account? Not checked yet (see [Distribution and revenue model](#distribution-and-revenue-model)).
 
 ## Name availability check
@@ -202,8 +233,10 @@ The check was done on **2026-11-21**. All candidates come from Armenian words an
 
 ### Method
 
-- **GitHub username:** opening `github.com/<name>` returned HTTP 404, which means free. **Repo search** covered all GitHub repositories. It was run for Nvagik (0 results) but not for Yergik and Dzaynik, because GitHub rate-limited the requests (HTTP 429).
-- **.com:** Verisign RDAP, where 404 means not registered. **.app and .dev:** Google Registry RDAP, where 404 means not registered. The method was validated on the already-registered `dzayn.app`, which returned 200.
+- **GitHub username:** opening `github.com/<name>` returned HTTP 404, which means free.
+- **Repo search** covered all GitHub repositories. It was run for Nvagik (0 results) but not for Yergik and Dzaynik, because GitHub rate-limited the requests (HTTP 429).
+- **.com:** Verisign RDAP, where 404 means not registered.
+- **.app and .dev:** Google Registry RDAP, where 404 means not registered. The method was validated on the already-registered `dzayn.app`, which returned 200.
 - **.io and .am:** DNS response only (via `dns.google`). NXDOMAIN suggests the domain is free, but a registered domain with no name servers can also return NXDOMAIN, so check with a registrar before buying.
 - **Microsoft Store:** searching the name on apps.microsoft.com returns only unrelated popular apps (for example TikTok and Adobe Photoshop). No app has the same name.
 
@@ -226,4 +259,5 @@ Why this license was chosen: [docs/DECISIONS.md](docs/DECISIONS.md#license-nvg-1
 
 ## Support the project
 
-Nvagik is free and is developed in the open. If you'd like to support development, please consider sponsoring it on [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik), or use the **Sponsor** button at the top of the repository page.
+- Nvagik is free and is developed in the open.
+- To support development, sponsor it on [GitHub Sponsors](https://github.com/sponsors/cholakhyanerik), or use the **Sponsor** button at the top of the repository page.

@@ -37,6 +37,11 @@ paths:
 - A new feature note or gotcha goes into the matching file. A new area gets a new file and a row in that table.
 - An agent prompt or skill that depends on a rules file names it, instead of relying on it being loaded.
 
+## README
+
+- Short lists and tables, no big paragraphs (rule 15).
+- `tests/test_repo_files.py` fails on a paragraph or list item longer than 300 characters (links count as their text; tables, headings and code blocks are exempt). Split a long item into nested items.
+
 ## CONTRIBUTING.md
 
 - A short public summary of the rules for outside contributors.
